@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\DotNetARX.XML</DocumentationFile>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoCAD.NET" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="AutoCAD.NET.Interfaces" />
+    <PackageReference Include="AutoCAD.NET.Interop" />
+    <PackageReference Include="AutoCAD.NET.Model" />
+    <PackageReference Include="Autofac" />
+    <PackageReference Include="MediatR.Contracts" />
+    <PackageReference Include="Microsoft.CSharp" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="SharpZipLib" />
+    <PackageReference Include="System.ComponentModel" />
+    <PackageReference Include="System.ComponentModel.Annotations" />
+    <PackageReference Include="System.Data.DataSetExtensions" />
+    <PackageReference Include="System.Diagnostics.Tools" />
+    <PackageReference Include="System.IO" />
+    <PackageReference Include="System.IO.Compression" />
+    <PackageReference Include="System.IO.FileSystem" />
+    <PackageReference Include="System.Linq" />
+    <PackageReference Include="System.Linq.Async" />
+    <PackageReference Include="System.Reflection" />
+    <PackageReference Include="System.Runtime" />
+    <PackageReference Include="System.Text.Encoding" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Threading" />
+    <PackageReference Include="System.Threading.Tasks" />
+    <PackageReference Include="System.Threading.Timer" />
+    <PackageReference Include="System.Xml.ReaderWriter" />
+    <PackageReference Include="System.Xml.XDocument" />
+    <PackageReference Include="System.Xml.XmlDocument" />
+    <PackageReference Include="System.Xml.XmlSerializer" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Serialization" />
+  </ItemGroup>
+</Project>

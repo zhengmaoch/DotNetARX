@@ -1,0 +1,46 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="AutoCAD.NET" Version="24.3.0" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageVersion Include="AutoCAD.NET.Interfaces" Version="24.4.20296.1" />
+    <PackageVersion Include="AutoCAD.NET.Interop" Version="2024.24.3.61" />
+    <PackageVersion Include="AutoCAD.NET.Model" Version="24.3.0" />
+    <PackageVersion Include="Autofac" Version="8.4.0" />
+    <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
+    <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageVersion Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="NUnit" Version="4.4.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.1.0" />
+    <PackageVersion Include="Serilog" Version="4.3.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <PackageVersion Include="SharpZipLib" Version="1.4.2" />
+    <PackageVersion Include="System.ComponentModel" Version="4.0.1" />
+    <PackageVersion Include="System.ComponentModel.Annotations" Version="4.1.0" />
+    <PackageVersion Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageVersion Include="System.Diagnostics.Tools" Version="4.0.1" />
+    <PackageVersion Include="System.IO" Version="4.1.0" />
+    <PackageVersion Include="System.IO.Compression" Version="4.1.1" />
+    <PackageVersion Include="System.IO.FileSystem" Version="4.0.1" />
+    <PackageVersion Include="System.Linq" Version="4.1.0" />
+    <PackageVersion Include="System.Linq.Async" Version="6.0.3" />
+    <PackageVersion Include="System.Reflection" Version="4.1.0" />
+    <PackageVersion Include="System.Runtime" Version="4.3.1" />
+    <PackageVersion Include="System.Text.Encoding" Version="4.0.11" />
+    <PackageVersion Include="System.Text.Json" Version="6.0.0" />
+    <PackageVersion Include="System.Threading" Version="4.0.11" />
+    <PackageVersion Include="System.Threading.Tasks" Version="4.0.11" />
+    <PackageVersion Include="System.Threading.Timer" Version="4.0.1" />
+    <PackageVersion Include="System.Xml.ReaderWriter" Version="4.0.11" />
+    <PackageVersion Include="System.Xml.XDocument" Version="4.0.11" />
+    <PackageVersion Include="System.Xml.XmlDocument" Version="4.0.1" />
+    <PackageVersion Include="System.Xml.XmlSerializer" Version="4.0.11" />
+  </ItemGroup>
+</Project>
