@@ -601,7 +601,7 @@ namespace DotNetARX.Configuration
             SetSetting("Performance.BatchTimeoutMs", 10);
 
             // 日志配置
-            SetSetting("Logging.Level", LogLevel.Information);
+            SetSetting("Logging.Level", LogLevel.Info);
             SetSetting("Logging.EnableFileLogging", true);
             SetSetting("Logging.MaxFileSizeMB", 10);
 

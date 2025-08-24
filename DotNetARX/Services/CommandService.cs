@@ -1,5 +1,4 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {
@@ -156,6 +155,134 @@ namespace DotNetARX.Services
             {
                 _logger?.Error($"执行ARX命令失败: {ex.Message}", ex);
                 throw new CommandOperationException($"执行ARX命令失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 执行命令（COM方式）
+        /// </summary>
+        public bool ExecuteCommandCOM(string command)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ExecuteCommandCOM");
+
+            try
+            {
+                if (string.IsNullOrEmpty(command))
+                {
+                    _logger?.Warning("命令不能为空");
+                    return false;
+                }
+
+                SendCommand(command);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"执行COM命令失败: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 异步执行命令
+        /// </summary>
+        public bool ExecuteCommandAsync(string command)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ExecuteCommandAsync");
+
+            try
+            {
+                if (string.IsNullOrEmpty(command))
+                {
+                    _logger?.Warning("命令不能为空");
+                    return false;
+                }
+
+                PostCommand(command);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"异步执行命令失败: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 队列执行命令
+        /// </summary>
+        public bool ExecuteCommandQueue(string command)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ExecuteCommandQueue");
+
+            try
+            {
+                if (string.IsNullOrEmpty(command))
+                {
+                    _logger?.Warning("命令不能为空");
+                    return false;
+                }
+
+                QueueExpression(command);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"队列执行命令失败: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 执行ARX命令（简单版本）
+        /// </summary>
+        public bool ExecuteARXCommand(string command)
+        {
+            return ExecuteARXCommand(command, null);
+        }
+
+        /// <summary>
+        /// 执行ARX命令（带参数）
+        /// </summary>
+        public bool ExecuteARXCommand(string command, params object[] args)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ExecuteARXCommand");
+
+            try
+            {
+                if (string.IsNullOrEmpty(command))
+                {
+                    _logger?.Warning("命令不能为空");
+                    return false;
+                }
+
+                var resultBuffer = new ResultBuffer();
+                resultBuffer.Add(new TypedValue((int)LispDataType.Text, command));
+
+                if (args != null)
+                {
+                    foreach (var arg in args)
+                    {
+                        if (arg is string str)
+                            resultBuffer.Add(new TypedValue((int)LispDataType.Text, str));
+                        else if (arg is int intVal)
+                            resultBuffer.Add(new TypedValue((int)LispDataType.Int32, intVal));
+                        else if (arg is double doubleVal)
+                            resultBuffer.Add(new TypedValue((int)LispDataType.Double, doubleVal));
+                        else if (arg is Point3d point)
+                            resultBuffer.Add(new TypedValue((int)LispDataType.Point3d, point));
+                        else
+                            resultBuffer.Add(new TypedValue((int)LispDataType.Text, arg?.ToString() ?? ""));
+                    }
+                }
+
+                var result = ExecuteCommand(resultBuffer);
+                return result == 0; // 0 通常表示成功
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"执行ARX命令失败: {ex.Message}", ex);
+                return false;
             }
         }
     }

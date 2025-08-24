@@ -1,4 +1,3 @@
-using Autodesk.AutoCAD.Colors;
 using DotNetARX.Extensions;
 using System.Runtime.CompilerServices;
 
@@ -93,7 +92,12 @@ namespace DotNetARX.Helpers
             return PerformanceEngine.Execute("CreateSpline", () =>
                 AutoCADContext.ExecuteSafely(() =>
                 {
-                    var spline = new Spline(new Point3dCollection(points), degree, 0);
+                    var pointCollection = new Point3dCollection();
+                    foreach (var point in points)
+                    {
+                        pointCollection.Add(point);
+                    }
+                    var spline = new Spline(pointCollection, degree, 0);
                     return CAD.AddToCurrentSpace(spline);
                 })
             );
@@ -116,18 +120,7 @@ namespace DotNetARX.Helpers
             try
             {
                 var extents = entity.GeometricExtents;
-                return new ArxBoundingBox
-                {
-                    MinPoint = extents.MinPoint,
-                    MaxPoint = extents.MaxPoint,
-                    Center = new Point3d(
-                        (extents.MinPoint.X + extents.MaxPoint.X) / 2,
-                        (extents.MinPoint.Y + extents.MaxPoint.Y) / 2,
-                        (extents.MinPoint.Z + extents.MaxPoint.Z) / 2),
-                    Width = extents.MaxPoint.X - extents.MinPoint.X,
-                    Height = extents.MaxPoint.Y - extents.MinPoint.Y,
-                    Depth = extents.MaxPoint.Z - extents.MinPoint.Z
-                };
+                return new ArxBoundingBox(extents.MinPoint, extents.MaxPoint);
             }
             catch (Exception ex)
             {
@@ -156,15 +149,7 @@ namespace DotNetARX.Helpers
             var maxY = boxes.Max(b => b.MaxPoint.Y);
             var maxZ = boxes.Max(b => b.MaxPoint.Z);
 
-            return new ArxBoundingBox
-            {
-                MinPoint = new Point3d(minX, minY, minZ),
-                MaxPoint = new Point3d(maxX, maxY, maxZ),
-                Center = new Point3d((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2),
-                Width = maxX - minX,
-                Height = maxY - minY,
-                Depth = maxZ - minZ
-            };
+            return new ArxBoundingBox(new Point3d(minX, minY, minZ), new Point3d(maxX, maxY, maxZ));
         }
 
         /// <summary>
@@ -232,7 +217,7 @@ namespace DotNetARX.Helpers
         /// <returns>实体信息</returns>
         public static ArxEntityInfo GetEntityInfo(ObjectId entityId)
         {
-            var entity = entityId.TryGetEntity();
+            var entity = entityId.TryGetEntity<Entity>();
 
             var info = new ArxEntityInfo
             {

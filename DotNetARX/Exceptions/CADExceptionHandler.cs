@@ -26,7 +26,7 @@ namespace DotNetARX.Exceptions
             catch (Autodesk.AutoCAD.Runtime.Exception acadEx)
             {
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
-                Logger.Error($"AutoCAD异常在{operationName}: {acadEx.ErrorStatus} - {acadEx.Message}", acadEx, operationName, filePath, lineNumber);
+                Logger.Error($"AutoCAD异常在{operationName}: {acadEx.ErrorStatus} - {acadEx.Message}", acadEx);
 
                 // 根据错误类型决定是否显示用户提示
                 if (ShouldShowUserAlert(acadEx.ErrorStatus))
@@ -38,13 +38,13 @@ namespace DotNetARX.Exceptions
             }
             catch (DotNetARXException dotNetARXEx)
             {
-                Logger.Error($"DotNetARX异常在{dotNetARXEx.Operation}: {dotNetARXEx.Message}", dotNetARXEx, operationName, filePath, lineNumber);
+                Logger.Error($"DotNetARX异常在{dotNetARXEx.Operation}: {dotNetARXEx.Message}", dotNetARXEx);
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.ShowAlertDialog($"{dotNetARXEx.Operation}失败: {dotNetARXEx.Message}");
                 return defaultValue;
             }
             catch (Exception ex)
             {
-                Logger.Error($"系统异常在{operationName}: {ex.Message}", ex, operationName, filePath, lineNumber);
+                Logger.Error($"系统异常在{operationName}: {ex.Message}", ex);
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.ShowAlertDialog($"{operationName}发生未预期错误，请查看日志获取详细信息");
                 return defaultValue;
             }
@@ -75,7 +75,6 @@ namespace DotNetARX.Exceptions
             switch (errorStatus)
             {
                 case ErrorStatus.UserBreak:
-                case ErrorStatus.Cancel:
                     return false;
 
                 default:
@@ -108,14 +107,8 @@ namespace DotNetARX.Exceptions
                 case ErrorStatus.NotOpenForRead:
                     return "对象未以读取模式打开";
 
-                case ErrorStatus.ObjectIsReadOnly:
-                    return "对象为只读状态";
-
                 case ErrorStatus.NotInDatabase:
                     return "对象不在数据库中";
-
-                case ErrorStatus.TransactionActive:
-                    return "事务正在进行中";
 
                 case ErrorStatus.NoActiveTransactions:
                     return "没有活动事务";
@@ -126,12 +119,6 @@ namespace DotNetARX.Exceptions
                 case ErrorStatus.InvalidLayer:
                     return "图层无效";
 
-                case ErrorStatus.LayerLocked:
-                    return "图层已锁定";
-
-                case ErrorStatus.LayerFrozen:
-                    return "图层已冻结";
-
                 case ErrorStatus.InvalidBlockName:
                     return "块名称无效";
 
@@ -140,9 +127,6 @@ namespace DotNetARX.Exceptions
 
                 case ErrorStatus.UserBreak:
                     return "用户中断操作";
-
-                case ErrorStatus.Cancel:
-                    return "操作已取消";
 
                 default:
                     return $"操作失败 (错误代码: {errorStatus})";

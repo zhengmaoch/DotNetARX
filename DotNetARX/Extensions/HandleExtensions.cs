@@ -19,7 +19,7 @@ namespace DotNetARX.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ObjectId GetObjectId(this Handle handle, Database database = null)
         {
-            if (handle.IsNull) return ObjectId.Null;
+            if (handle == new Handle(0)) return ObjectId.Null;
 
             return AutoCADContext.ExecuteSafely(() =>
             {
@@ -47,7 +47,7 @@ namespace DotNetARX.Extensions
         {
             objectId = ObjectId.Null;
 
-            if (handle.IsNull) return false;
+            if (handle == new Handle(0)) return false;
 
             try
             {
@@ -58,7 +58,7 @@ namespace DotNetARX.Extensions
             }
             catch (Exception ex)
             {
-                _logger.Debug($"从Handle获取ObjectId失败: {handle}", ex);
+                _logger.Debug($"从Handle获取ObjectId失败: {handle}");
                 return false;
             }
         }
@@ -94,7 +94,11 @@ namespace DotNetARX.Extensions
 
             if (handle.TryGetObjectId(out ObjectId objectId, database))
             {
-                return objectId.TryGetEntity(out entity, mode);
+                var objectId = handle.GetObjectId(database);
+                if (!objectId.IsNull)
+                {
+                    return objectId.TryGetEntity(out entity, mode);
+                }
             }
 
             return false;
@@ -124,7 +128,7 @@ namespace DotNetARX.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValid(this Handle handle, Database database = null)
         {
-            if (handle.IsNull) return false;
+            if (handle == new Handle(0)) return false;
 
             return AutoCADContext.ExecuteSafely(() =>
             {
@@ -144,7 +148,7 @@ namespace DotNetARX.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsErased(this Handle handle, Database database = null)
         {
-            if (handle.IsNull) return true;
+            if (handle == new Handle(0)) return true;
 
             return AutoCADContext.ExecuteSafely(() =>
             {
@@ -161,7 +165,7 @@ namespace DotNetARX.Extensions
         /// <returns>类型名称，失败时返回null</returns>
         public static string GetObjectTypeName(this Handle handle, Database database = null)
         {
-            if (handle.IsNull) return null;
+            if (handle == new Handle(0)) return null;
 
             return AutoCADContext.ExecuteSafely(() =>
             {
@@ -182,7 +186,7 @@ namespace DotNetARX.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ToHexString(this Handle handle)
         {
-            return handle.IsNull ? string.Empty : handle.Value.ToString("X");
+            return handle == new Handle(0) ? string.Empty : handle.Value.ToString("X");
         }
 
         /// <summary>
@@ -193,7 +197,7 @@ namespace DotNetARX.Extensions
         public static Handle FromHexString(string hexString)
         {
             if (string.IsNullOrWhiteSpace(hexString))
-                return Handle.Null;
+                return new Handle(0);
 
             try
             {
@@ -204,10 +208,10 @@ namespace DotNetARX.Extensions
             }
             catch (Exception ex)
             {
-                _logger.Debug($"从十六进制字符串创建Handle失败: {hexString}", ex);
+                _logger.Debug($"从十六进制字符串创建Handle失败: {hexString}");
             }
 
-            return Handle.Null;
+            return new Handle(0);
         }
 
         /// <summary>
@@ -265,11 +269,11 @@ namespace DotNetARX.Extensions
             var info = new ArxHandleInfo
             {
                 Handle = handle,
-                IsNull = handle.IsNull,
+                IsNull = handle == new Handle(0),
                 HexString = handle.ToHexString()
             };
 
-            if (!handle.IsNull)
+            if (handle != new Handle(0))
             {
                 info.IsValid = handle.IsValid(database);
                 if (info.IsValid)
@@ -329,7 +333,7 @@ namespace DotNetARX.Extensions
         /// </summary>
         public override string ToString()
         {
-            if (IsNull) return "Handle.Null";
+            if (IsNull) return "Handle.Empty";
             return $"Handle({HexString}) -> {ObjectTypeName ?? "Unknown"} [{(IsValid ? "Valid" : "Invalid")}]";
         }
     }

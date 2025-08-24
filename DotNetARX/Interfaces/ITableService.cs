@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>

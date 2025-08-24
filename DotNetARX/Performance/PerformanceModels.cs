@@ -176,7 +176,7 @@ namespace DotNetARX.Performance
     /// </summary>
     public abstract class DotNetARXBenchmarkBase
     {
-        protected readonly ILogger _logger = LogManager.GetLogger("Benchmark");
+        protected readonly ILogger _logger = LogManager.GetLogger(typeof(DotNetARXBenchmarkBase));
 
         [GlobalSetup]
         public virtual void Setup()

@@ -1,5 +1,4 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 using System.Windows.Forms;
 
 namespace DotNetARX.Services
@@ -85,6 +84,14 @@ namespace DotNetARX.Services
                 _logger?.Error($"显示确认对话框失败: {ex.Message}", ex);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 显示确认对话框（别名方法）
+        /// </summary>
+        public bool ShowConfirmationDialog(string message, string title = "确认")
+        {
+            return ShowConfirmDialog(message, title);
         }
 
         /// <summary>

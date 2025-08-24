@@ -178,10 +178,11 @@ namespace DotNetARX.Extensions
             if (entityList == null || !entityList.Any())
                 return new List<ObjectId>();
 
-            return AutoCADContext.ExecuteBatch(context =>
+            List<ObjectId> entityIds = null;
+            AutoCADContext.ExecuteBatch(context =>
             {
                 var modelSpace = database.GetModelSpace(OpenMode.ForWrite);
-                var entityIds = new List<ObjectId>();
+                entityIds = new List<ObjectId>();
 
                 foreach (var entity in entityList)
                 {
@@ -189,9 +190,9 @@ namespace DotNetARX.Extensions
                     context.Transaction.AddNewlyCreatedDBObject(entity, true);
                     entityIds.Add(entityId);
                 }
-
-                return entityIds;
             });
+
+            return entityIds ?? new List<ObjectId>();
         }
 
         /// <summary>
@@ -498,6 +499,83 @@ namespace DotNetARX.Extensions
         }
 
         #endregion 清理操作
+
+        #region Entity扩展方法
+
+        /// <summary>
+        /// 获取实体上距离指定点最近的点
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <param name="point">参考点</param>
+        /// <returns>最近点，如果无法计算则返回null</returns>
+        public static Point3d? GetClosestPointTo(this Entity entity, Point3d point)
+        {
+            if (entity == null) return null;
+
+            // 对于曲线类型，使用原生方法
+            if (entity is Curve curve)
+            {
+                try
+                {
+                    return curve.GetClosestPointTo(point, Vector3d.ZAxis, false);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            // 对于其他实体类型，使用几何外框估算
+            try
+            {
+                var extents = entity.GeometricExtents;
+                var center = new Point3d(
+                    (extents.MinPoint.X + extents.MaxPoint.X) / 2,
+                    (extents.MinPoint.Y + extents.MaxPoint.Y) / 2,
+                    (extents.MinPoint.Z + extents.MaxPoint.Z) / 2);
+
+                // 返回外框上距离参考点最近的点
+                var corners = new[]
+                {
+                    extents.MinPoint,
+                    extents.MaxPoint,
+                    new Point3d(extents.MinPoint.X, extents.MaxPoint.Y, extents.MinPoint.Z),
+                    new Point3d(extents.MaxPoint.X, extents.MinPoint.Y, extents.MinPoint.Z),
+                    new Point3d(extents.MinPoint.X, extents.MinPoint.Y, extents.MaxPoint.Z),
+                    new Point3d(extents.MaxPoint.X, extents.MaxPoint.Y, extents.MinPoint.Z),
+                    new Point3d(extents.MinPoint.X, extents.MaxPoint.Y, extents.MaxPoint.Z),
+                    new Point3d(extents.MaxPoint.X, extents.MinPoint.Y, extents.MaxPoint.Z),
+                    center
+                };
+
+                return corners.OrderBy(p => p.DistanceTo(point)).First();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        #endregion Entity扩展方法
+
+        #region 集合扩展方法
+
+        /// <summary>
+        /// 获取字典中的值，如果不存在则返回默认值
+        /// </summary>
+        /// <typeparam name="TKey">键类型</typeparam>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <param name="dictionary">字典</param>
+        /// <param name="key">键</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>值或默认值</returns>
+        public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default(TValue))
+        {
+            if (dictionary == null) return defaultValue;
+            return dictionary.TryGetValue(key, out var value) ? value : defaultValue;
+        }
+
+        #endregion 集合扩展方法
     }
 
     #region 辅助数据结构

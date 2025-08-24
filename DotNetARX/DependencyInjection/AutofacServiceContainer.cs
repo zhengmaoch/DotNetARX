@@ -61,6 +61,7 @@ namespace DotNetARX.DependencyInjection
         }
 
         public IServiceContainer RegisterSingleton<TInterface>(TInterface instance)
+            where TInterface : class
         {
             EnsureNotBuilt();
 
@@ -167,7 +168,7 @@ namespace DotNetARX.DependencyInjection
             {
                 return _container.Resolve<T>();
             }
-            catch (ComponentNotRegisteredException)
+            catch (Autofac.Core.Registration.ComponentNotRegisteredException)
             {
                 return default(T);
             }
@@ -186,7 +187,7 @@ namespace DotNetARX.DependencyInjection
             {
                 return _container.Resolve(serviceType);
             }
-            catch (ComponentNotRegisteredException)
+            catch (Autofac.Core.Registration.ComponentNotRegisteredException)
             {
                 return null;
             }
@@ -415,7 +416,7 @@ namespace DotNetARX.DependencyInjection
             {
                 return _scope.Resolve<T>();
             }
-            catch (ComponentNotRegisteredException)
+            catch (Autofac.Core.Registration.ComponentNotRegisteredException)
             {
                 return default(T);
             }
@@ -427,7 +428,7 @@ namespace DotNetARX.DependencyInjection
             {
                 return _scope.Resolve(serviceType);
             }
-            catch (ComponentNotRegisteredException)
+            catch (Autofac.Core.Registration.ComponentNotRegisteredException)
             {
                 return null;
             }

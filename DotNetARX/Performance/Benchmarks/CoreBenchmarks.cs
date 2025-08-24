@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using DotNetARX.Caching;
 using DotNetARX.DependencyInjection;
 
 namespace DotNetARX.Performance.Benchmarks
@@ -29,8 +30,8 @@ namespace DotNetARX.Performance.Benchmarks
             // 创建测试实体
             try
             {
-                _testLineId = CAD.Line(_sourcePoint, _targetPoint);
-                _testCircleId = CAD.Circle(new Point3d(50, 50, 0), 25);
+                _testLineId = CAD.CreateLine(_sourcePoint, _targetPoint);
+                _testCircleId = CAD.CreateCircle(new Point3d(50, 50, 0), 25);
             }
             catch (Exception ex)
             {
@@ -42,21 +43,21 @@ namespace DotNetARX.Performance.Benchmarks
         [BenchmarkCategory("Drawing")]
         public ObjectId CreateLine()
         {
-            return CAD.Line(Point3d.Origin, new Point3d(100, 100, 0));
+            return CAD.CreateLine(Point3d.Origin, new Point3d(100, 100, 0));
         }
 
         [Benchmark]
         [BenchmarkCategory("Drawing")]
         public ObjectId CreateCircle()
         {
-            return CAD.Circle(new Point3d(50, 50, 0), 25);
+            return CAD.CreateCircle(new Point3d(50, 50, 0), 25);
         }
 
         [Benchmark]
         [BenchmarkCategory("Drawing")]
         public ObjectId CreateArc()
         {
-            return CAD.Arc(new Point3d(0, 0, 0), 30, 0, Math.PI);
+            return CAD.CreateArc(new Point3d(0, 0, 0), 30, 0, Math.PI);
         }
 
         [Benchmark]
@@ -64,7 +65,7 @@ namespace DotNetARX.Performance.Benchmarks
         public bool MoveEntity()
         {
             if (_testLineId.IsNull) return false;
-            return CAD.Move(_testLineId, _sourcePoint, _targetPoint);
+            return CAD.MoveEntity(_testLineId, _sourcePoint, _targetPoint);
         }
 
         [Benchmark]
@@ -72,7 +73,7 @@ namespace DotNetARX.Performance.Benchmarks
         public ObjectId CopyEntity()
         {
             if (_testLineId.IsNull) return ObjectId.Null;
-            return CAD.Copy(_testLineId, _sourcePoint, _targetPoint);
+            return CAD.CopyEntity(_testLineId, _sourcePoint, _targetPoint);
         }
 
         [Benchmark]
@@ -80,7 +81,7 @@ namespace DotNetARX.Performance.Benchmarks
         public bool RotateEntity()
         {
             if (_testLineId.IsNull) return false;
-            return CAD.Rotate(_testLineId, _sourcePoint, Math.PI / 4);
+            return CAD.RotateEntity(_testLineId, _sourcePoint, Math.PI / 4);
         }
 
         [Benchmark]
@@ -88,35 +89,40 @@ namespace DotNetARX.Performance.Benchmarks
         public bool ScaleEntity()
         {
             if (_testLineId.IsNull) return false;
-            return CAD.Scale(_testLineId, _sourcePoint, 1.5);
+            return CAD.ScaleEntity(_testLineId, _sourcePoint, 1.5);
         }
 
         [Benchmark]
         [BenchmarkCategory("Query")]
         public List<ObjectId> SelectLinesByType()
         {
-            return CAD.SelectByType<Line>();
+            // Disambiguate by explicitly referencing the static class
+            return CAD.ARXSelection.ByType<Line>().Select(e => e.ObjectId).ToList();
         }
 
         [Benchmark]
         [BenchmarkCategory("Query")]
         public List<ObjectId> SelectCirclesByType()
         {
-            return CAD.SelectByType<Circle>();
+            // Disambiguate by explicitly referencing the static class
+            return CAD.ARXSelection.ByType<Circle>().Select(e => e.ObjectId).ToList();
         }
+
+        private static int _layerCounter = 0;
 
         [Benchmark]
         [BenchmarkCategory("Layer")]
         public ObjectId CreateLayer()
         {
-            return CAD.CreateLayer($"TestLayer_{DateTime.Now.Ticks}", 1);
+            int id = Interlocked.Increment(ref _layerCounter);
+            return CAD.CreateLayer($"TestLayer_{id}", 1);
         }
 
         [Benchmark]
         [BenchmarkCategory("Layer")]
         public bool LayerExists()
         {
-            return CAD.LayerExists("0");
+            return ARXLayer.Exists("0");
         }
     }
 
@@ -124,7 +130,7 @@ namespace DotNetARX.Performance.Benchmarks
     /// 缓存系统性能基准测试
     /// </summary>
     [MemoryDiagnoser]
-    [SimpleJob(launchCount: 1, warmupCount: 3, targetCount: 5)]
+    [SimpleJob(launchCount: 1, warmupCount: 3, iterationCount: 5)]
     public class CachePerformanceBenchmarks : DotNetARXBenchmarkBase
     {
         private ISmartCache<string, string> _smartCache;
@@ -220,36 +226,36 @@ namespace DotNetARX.Performance.Benchmarks
     /// 服务定位器性能基准测试
     /// </summary>
     [MemoryDiagnoser]
-    [SimpleJob(launchCount: 1, warmupCount: 3, targetCount: 5)]
+    [SimpleJob(launchCount: 1, warmupCount: 3, iterationCount: 5)]
     public class ServiceLocatorBenchmarks : DotNetARXBenchmarkBase
     {
         [Benchmark]
         [BenchmarkCategory("DI")]
         public object GetService_Logger()
         {
-            return SmartServiceLocator.GetService<ILogger>();
+            return SmartServiceLocator.Current.Resolve<ILogger>();
         }
 
         [Benchmark]
         [BenchmarkCategory("DI")]
         public object GetService_ConfigManager()
         {
-            return SmartServiceLocator.GetService<IConfigurationManager>();
+            return SmartServiceLocator.Current.Resolve<IConfigurationManager>();
         }
 
         [Benchmark]
         [BenchmarkCategory("DI")]
         public bool TryGetService_Logger()
         {
-            return SmartServiceLocator.TryGetService<ILogger>(out _);
+            return SmartServiceLocator.Current.IsRegistered<ILogger>();
         }
 
         [Benchmark]
         [BenchmarkCategory("DI")]
         public object CreateScope()
         {
-            using var scope = SmartServiceLocator.CreateScope();
-            return scope.GetService<ILogger>();
+            using var scope = SmartServiceLocator.Current.CreateScope();
+            return scope.ServiceProvider.GetService(typeof(ILogger));
         }
     }
 
@@ -257,7 +263,7 @@ namespace DotNetARX.Performance.Benchmarks
     /// 字符串和集合操作性能基准测试
     /// </summary>
     [MemoryDiagnoser]
-    [SimpleJob(launchCount: 1, warmupCount: 2, targetCount: 3)]
+    [SimpleJob(launchCount: 1, warmupCount: 2, iterationCount: 3)]
     public class UtilityBenchmarks : DotNetARXBenchmarkBase
     {
         private readonly string[] _testStrings;
@@ -299,7 +305,7 @@ namespace DotNetARX.Performance.Benchmarks
         [BenchmarkCategory("Collection")]
         public List<int> ListAddition()
         {
-            var list = new List<int>();
+            var list = new List<int>(1000); // Pre-allocate capacity
             for (int i = 0; i < 1000; i++)
             {
                 list.Add(i);
@@ -313,6 +319,21 @@ namespace DotNetARX.Performance.Benchmarks
         {
             var list = new List<int>(1000);
             for (int i = 0; i < 1000; i++)
+            {
+                list.Add(i);
+            }
+            return list;
+        }
+
+        [Params(10, 100, 1000)]
+        public int N;
+
+        [Benchmark]
+        [BenchmarkCategory("Collection")]
+        public List<int> ListAddition_Param()
+        {
+            var list = new List<int>(N);
+            for (int i = 0; i < N; i++)
             {
                 list.Add(i);
             }

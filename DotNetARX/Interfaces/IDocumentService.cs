@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -11,6 +9,11 @@ namespace DotNetARX.Interfaces
         /// 检查文档是否已保存
         /// </summary>
         bool IsDocumentSaved();
+
+        /// <summary>
+        /// 检查文档是否需要保存
+        /// </summary>
+        bool CheckDocumentNeedsSave();
 
         /// <summary>
         /// 保存文档

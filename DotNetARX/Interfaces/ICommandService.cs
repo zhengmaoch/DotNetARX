@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -26,5 +24,27 @@ namespace DotNetARX.Interfaces
         /// 执行ARX命令
         /// </summary>
         int ExecuteCommand(ResultBuffer args);
+
+        /// <summary>
+        /// 执行COM命令
+        /// </summary>
+        bool ExecuteCommandCOM(string command);
+
+        /// <summary>
+        /// 异步执行命令
+        /// </summary>
+        bool ExecuteCommandAsync(string command);
+
+        /// <summary>
+        /// 队列执行命令
+        /// </summary>
+        bool ExecuteCommandQueue(string command);
+
+        /// <summary>
+        /// 执行ARX命令（字符串方式）
+        /// </summary>
+        bool ExecuteARXCommand(string command);
+
+        bool ExecuteARXCommand(string command, params object[] args);
     }
 }

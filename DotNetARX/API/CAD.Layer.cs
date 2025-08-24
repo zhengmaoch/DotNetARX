@@ -1,3 +1,4 @@
+using DotNetARX.Caching;
 using System.Runtime.CompilerServices;
 
 namespace DotNetARX

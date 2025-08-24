@@ -1,4 +1,3 @@
-using Autodesk.AutoCAD.Colors;
 using System.Runtime.CompilerServices;
 
 namespace DotNetARX.Extensions
@@ -72,7 +71,7 @@ namespace DotNetARX.Extensions
         /// <returns>实体类型名称</returns>
         public static string GetEntityTypeName(this ObjectId objectId)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity?.GetType().Name ?? "Unknown";
         }
 
@@ -83,7 +82,7 @@ namespace DotNetARX.Extensions
         /// <returns>图层名称</returns>
         public static string GetLayerName(this ObjectId objectId)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity?.Layer ?? "";
         }
 
@@ -94,7 +93,7 @@ namespace DotNetARX.Extensions
         /// <returns>实体颜色</returns>
         public static Color GetEntityColor(this ObjectId objectId)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity?.Color ?? Color.FromColorIndex(ColorMethod.ByAci, 256);
         }
 
@@ -241,7 +240,7 @@ namespace DotNetARX.Extensions
         /// <returns>是否为指定类型</returns>
         public static bool IsOfType<T>(this ObjectId objectId) where T : Entity
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity is T;
         }
 
@@ -253,7 +252,7 @@ namespace DotNetARX.Extensions
         /// <returns>是否在指定图层</returns>
         public static bool IsOnLayer(this ObjectId objectId, string layerName)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity?.Layer == layerName;
         }
 
@@ -264,7 +263,7 @@ namespace DotNetARX.Extensions
         /// <returns>是否被锁定</returns>
         public static bool IsLocked(this ObjectId objectId)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             return entity?.IsReadEnabled == false;
         }
 
@@ -279,7 +278,7 @@ namespace DotNetARX.Extensions
         /// <returns>边界框</returns>
         public static ArxBoundingBox GetBoundingBox(this ObjectId objectId)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             if (entity == null)
                 return ArxBoundingBox.Empty;
 
@@ -313,12 +312,12 @@ namespace DotNetARX.Extensions
         /// <returns>最近距离</returns>
         public static double DistanceTo(this ObjectId objectId, Point3d point)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             if (entity == null) return double.MaxValue;
 
             try
             {
-                var closestPoint = entity.GetClosestPointTo(point, false);
+                var closestPoint = entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
                 return point.DistanceTo(closestPoint);
             }
             catch
@@ -335,12 +334,12 @@ namespace DotNetARX.Extensions
         /// <returns>最近的点</returns>
         public static Point3d GetClosestPointTo(this ObjectId objectId, Point3d point)
         {
-            var entity = objectId.TryGetEntity();
+            var entity = objectId.TryGetEntity<Entity>();
             if (entity == null) return Point3d.Origin;
 
             try
             {
-                return entity.GetClosestPointTo(point, false);
+                return entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
             }
             catch
             {
@@ -446,6 +445,13 @@ namespace DotNetARX.Extensions
             IsEmpty = false;
         }
 
+        private ArxBoundingBox(bool isEmpty)
+        {
+            MinPoint = Point3d.Origin;
+            MaxPoint = Point3d.Origin;
+            IsEmpty = isEmpty;
+        }
+
         public Point3d Center => new Point3d(
             (MinPoint.X + MaxPoint.X) / 2,
             (MinPoint.Y + MaxPoint.Y) / 2,
@@ -455,7 +461,7 @@ namespace DotNetARX.Extensions
         public double Height => MaxPoint.Y - MinPoint.Y;
         public double Depth => MaxPoint.Z - MinPoint.Z;
 
-        public static ArxBoundingBox Empty => new ArxBoundingBox { IsEmpty = true };
+        public static ArxBoundingBox Empty => new ArxBoundingBox(true);
     }
 
     #endregion 辅助数据结构

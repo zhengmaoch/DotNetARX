@@ -110,7 +110,8 @@ namespace DotNetARX.DependencyInjection
         /// <summary>
         /// 注册单例实例
         /// </summary>
-        IServiceContainer RegisterSingleton<TInterface>(TInterface instance);
+        IServiceContainer RegisterSingleton<TInterface>(TInterface instance)
+            where TInterface : class;
 
         /// <summary>
         /// 注册工厂方法
@@ -176,6 +177,7 @@ namespace DotNetARX.DependencyInjection
         }
 
         public IServiceContainer RegisterSingleton<TInterface>(TInterface instance)
+            where TInterface : class
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
@@ -435,6 +437,38 @@ namespace DotNetARX.DependencyInjection
             }
 
             return service;
+        }
+
+        public T GetService<T>()
+        {
+            return (T)GetService(typeof(T));
+        }
+
+        public T GetRequiredService<T>()
+        {
+            var service = GetService<T>();
+            if (service == null)
+                throw new InvalidOperationException($"Required service of type {typeof(T).Name} is not registered.");
+            return service;
+        }
+
+        public object GetRequiredService(Type serviceType)
+        {
+            var service = GetService(serviceType);
+            if (service == null)
+                throw new InvalidOperationException($"Required service of type {serviceType.Name} is not registered.");
+            return service;
+        }
+
+        public IEnumerable<T> GetServices<T>()
+        {
+            return GetServices(typeof(T)).Cast<T>();
+        }
+
+        public IEnumerable<object> GetServices(Type serviceType)
+        {
+            var service = GetService(serviceType);
+            return service != null ? new[] { service } : Enumerable.Empty<object>();
         }
 
         public void Dispose()

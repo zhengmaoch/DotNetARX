@@ -1,3 +1,4 @@
+using DotNetARX.Extensions;
 using System.Runtime.CompilerServices;
 
 namespace DotNetARX.Helpers
@@ -470,7 +471,7 @@ namespace DotNetARX.Helpers
         /// <returns>几何信息</returns>
         public static ArxGeometryInfo GetGeometryInfo(ObjectId entityId)
         {
-            var entity = entityId.TryGetEntity();
+            var entity = entityId.GetEntity();
             if (entity == null) return new ArxGeometryInfo { IsValid = false };
 
             var info = new ArxGeometryInfo
@@ -519,7 +520,7 @@ namespace DotNetARX.Helpers
             catch (Exception ex)
             {
                 info.HasGeometricExtents = false;
-                _logger.Debug($"获取几何信息失败: {entityId}", ex);
+                _logger.Debug($"获取几何信息失败: {entityId}");
             }
 
             return info;

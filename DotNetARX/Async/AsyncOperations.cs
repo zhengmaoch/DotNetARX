@@ -1,5 +1,4 @@
 using DotNetARX.Events;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Async
 {
@@ -369,6 +368,7 @@ namespace DotNetARX.Async
                     if (!(entity is Curve curve))
                     {
                         CADExceptionHandler.ThrowEntityException("偏移实体", entityId, "只能偏移曲线类型的实体");
+                        return new ObjectIdCollection();
                     }
 
                     var offsetCurves = curve.GetOffsetCurves(distance);

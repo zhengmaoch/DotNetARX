@@ -1,3 +1,5 @@
+using DotNetARX.Events;
+
 namespace DotNetARX.DependencyInjection
 {
     /// <summary>

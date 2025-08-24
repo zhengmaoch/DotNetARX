@@ -276,37 +276,6 @@ namespace DotNetARX.Configuration
     }
 
     /// <summary>
-    /// 配置键常量
-    /// </summary>
-    public static class ConfigurationKeys
-    {
-        // CAD相关配置
-        public const string DefaultLayerName = "CAD.DefaultLayerName";
-
-        public const string DefaultTextStyle = "CAD.DefaultTextStyle";
-        public const string DefaultTextHeight = "CAD.DefaultTextHeight";
-        public const string DefaultBatchSize = "CAD.DefaultBatchSize";
-
-        // 系统配置
-        public const string EnableLogging = "System.EnableLogging";
-
-        public const string LogLevel = "System.LogLevel";
-        public const string AutoSaveInterval = "System.AutoSaveInterval";
-        public const string MaxUndoLevels = "System.MaxUndoLevels";
-
-        // 性能配置
-        public const string EntityCacheSize = "Performance.EntityCacheSize";
-
-        public const string LayerCacheSize = "Performance.LayerCacheSize";
-        public const string EnablePerformanceMonitoring = "Performance.EnableMonitoring";
-
-        // UI配置
-        public const string ShowProgressDialog = "UI.ShowProgressDialog";
-
-        public const string ProgressUpdateInterval = "UI.ProgressUpdateInterval";
-    }
-
-    /// <summary>
     /// 全局配置管理器实例
     /// </summary>
     public static class GlobalConfiguration

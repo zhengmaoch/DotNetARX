@@ -1,3 +1,5 @@
+using DotNetARX.Extensions;
+
 namespace DotNetARX.CodeGeneration
 {
     /// <summary>

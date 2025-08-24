@@ -1,5 +1,4 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 using System.Windows.Forms;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 
@@ -79,7 +78,7 @@ namespace DotNetARX.Services
                 _cancelButton.Click += (sender, e) =>
                 {
                     _isCancelled = true;
-                    _eventBus?.Publish(new ProgressEvent("ProgressCancelled", _currentOperation, _totalOperations, "用户取消操作"));
+                    _eventBus?.Publish(new ProgressEvent("ProgressCancelled", "用户取消操作", 0));
                     _logger?.Info("用户取消了操作进度");
                     _progressForm.Hide();
                 };
@@ -92,7 +91,7 @@ namespace DotNetARX.Services
                     {
                         e.Cancel = true; // 防止用户直接关闭窗口
                         _isCancelled = true;
-                        _eventBus?.Publish(new ProgressEvent("ProgressCancelled", _currentOperation, _totalOperations, "用户关闭窗口"));
+                        _eventBus?.Publish(new ProgressEvent("ProgressCancelled", "用户关闭窗口", 0));
                     }
                 };
             }
@@ -129,7 +128,7 @@ namespace DotNetARX.Services
                     }));
                 }
 
-                _eventBus?.Publish(new ProgressEvent("ProgressInitialized", 0, _totalOperations, "进度初始化"));
+                _eventBus?.Publish(new ProgressEvent("ProgressInitialized", "进度初始化", 0));
                 _logger?.Info($"进度管理器初始化：总操作数 {_totalOperations}");
             }
             catch (Exception ex)
@@ -165,10 +164,10 @@ namespace DotNetARX.Services
                     }));
                 }
 
-                _eventBus?.Publish(new ProgressEvent("ProgressUpdated", currentOp, _totalOperations, statusMessage));
+                _eventBus?.Publish(new ProgressEvent("ProgressUpdated", statusMessage, percentage));
 
                 // 处理Windows消息，确保界面响应
-                Application.DoEvents();
+                System.Windows.Forms.Application.DoEvents();
             }
             catch (Exception ex)
             {
@@ -208,7 +207,7 @@ namespace DotNetARX.Services
                     }));
 
                     // 延迟一秒后自动关闭
-                    var timer = new Timer();
+                    var timer = new System.Windows.Forms.Timer();
                     timer.Interval = 1000;
                     timer.Tick += (sender, e) =>
                     {
@@ -222,7 +221,7 @@ namespace DotNetARX.Services
                     timer.Start();
                 }
 
-                _eventBus?.Publish(new ProgressEvent("ProgressCompleted", _currentOperation, _totalOperations, message));
+                _eventBus?.Publish(new ProgressEvent("ProgressCompleted", message, 100));
                 _logger?.Info($"操作完成：{message}");
             }
             catch (Exception ex)
@@ -250,7 +249,7 @@ namespace DotNetARX.Services
                     }));
                 }
 
-                _eventBus?.Publish(new ProgressEvent("ProgressCancelled", _currentOperation, _totalOperations, "操作被取消"));
+                _eventBus?.Publish(new ProgressEvent("ProgressCancelled", "操作被取消", 0));
                 _logger?.Info("操作进度被取消");
             }
             catch (Exception ex)

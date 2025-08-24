@@ -78,41 +78,7 @@ namespace DotNetARX
             return string.IsNullOrWhiteSpace(value);
         }
 
-        /// <summary>
-        /// 获取模型空间的ObjectId（带验证）
-        /// </summary>
-        /// <param name="db">数据库对象</param>
-        /// <returns>返回模型空间的ObjectId</returns>
-        public static ObjectId GetModelSpaceId(this Database db)
-        {
-            return CADExceptionHandler.ExecuteWithExceptionHandling(() =>
-            {
-                if (db == null)
-                    CADExceptionHandler.ThrowCADException("获取模型空间ID", "数据库对象为null");
-
-                var modelSpaceId = SymbolUtilityServices.GetBlockModelSpaceId(db);
-                Logger.Debug($"获取模型空间ID: {modelSpaceId}");
-                return modelSpaceId;
-            }, ObjectId.Null);
-        }
-
-        /// <summary>
-        /// 获取图纸空间的ObjectId（带验证）
-        /// </summary>
-        /// <param name="db">数据库对象</param>
-        /// <returns>返回图纸空间的ObjectId</returns>
-        public static ObjectId GetPaperSpaceId(this Database db)
-        {
-            return CADExceptionHandler.ExecuteWithExceptionHandling(() =>
-            {
-                if (db == null)
-                    CADExceptionHandler.ThrowCADException("获取图纸空间ID", "数据库对象为null");
-
-                var paperSpaceId = SymbolUtilityServices.GetBlockPaperSpaceId(db);
-                Logger.Debug($"获取图纸空间ID: {paperSpaceId}");
-                return paperSpaceId;
-            }, ObjectId.Null);
-        }
+        // GetModelSpaceId和GetPaperSpaceId方法已移至AutoCADContext.cs中的DatabaseExtensions类
 
         /// <summary>
         /// 改进的实体添加到模型空间方法

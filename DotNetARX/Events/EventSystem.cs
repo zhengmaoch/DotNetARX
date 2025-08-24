@@ -98,6 +98,67 @@ namespace DotNetARX.Events
     }
 
     /// <summary>
+    /// 实体事件
+    /// </summary>
+    public class EntityEvent
+    {
+        public ObjectId EntityId { get; set; }
+        public string EntityType { get; set; }
+        public string Operation { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Source { get; set; }
+
+        public EntityEvent(ObjectId entityId, string operation, string entityType = null, string source = null)
+        {
+            EntityId = entityId;
+            Operation = operation;
+            EntityType = entityType;
+            Timestamp = DateTime.Now;
+            Source = source;
+        }
+    }
+
+    /// <summary>
+    /// 样式事件
+    /// </summary>
+    public class StyleEvent
+    {
+        public string StyleName { get; set; }
+        public ObjectId StyleId { get; set; }
+        public string Operation { get; set; }
+        public string StyleType { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        public StyleEvent(string styleName, ObjectId styleId, string operation, string styleType)
+        {
+            StyleName = styleName;
+            StyleId = styleId;
+            Operation = operation;
+            StyleType = styleType;
+            Timestamp = DateTime.Now;
+        }
+    }
+
+    /// <summary>
+    /// 进度事件
+    /// </summary>
+    public class ProgressEvent
+    {
+        public string OperationName { get; set; }
+        public double Progress { get; set; }
+        public string Message { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        public ProgressEvent(string operationName, double progress, string message = null)
+        {
+            OperationName = operationName;
+            Progress = progress;
+            Message = message;
+            Timestamp = DateTime.Now;
+        }
+    }
+
+    /// <summary>
     /// 事件处理器接口
     /// </summary>
     public interface IEventHandler<in T> where T : EventArgs
@@ -311,6 +372,11 @@ namespace DotNetARX.Events
             new Lazy<EventPublisher>(() => new EventPublisher());
 
         public static IEventPublisher Publisher => _publisher.Value;
+
+        /// <summary>
+        /// 默认事件总线
+        /// </summary>
+        public static IEventPublisher DefaultBus => Publisher;
 
         // 实体相关事件
         public static event Func<EntityEventArgs, Task> EntityCreated;

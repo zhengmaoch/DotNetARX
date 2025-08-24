@@ -1,6 +1,5 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
-
+using DotNetARX.Events;
 
 namespace DotNetARX.Services
 {
@@ -56,7 +55,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到模型空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到模型空间失败: {ex.Message}", ex.ToString());
                 throw new DatabaseOperationException($"添加实体到模型空间失败: {ex.Message}", ex);
             }
         }
@@ -106,7 +105,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"批量添加实体到模型空间失败: {ex.Message}", ex);
+                _logger?.Error($"批量添加实体到模型空间失败: {ex.Message}", ex.ToString());
                 throw new DatabaseOperationException($"批量添加实体到模型空间失败: {ex.Message}", ex);
             }
         }
@@ -144,7 +143,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到图纸空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到图纸空间失败: {ex.Message}", ex.ToString());
                 throw new DatabaseOperationException($"添加实体到图纸空间失败: {ex.Message}", ex);
             }
         }
@@ -182,7 +181,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到当前空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到当前空间失败: {ex.Message}", ex.ToString());
                 throw new DatabaseOperationException($"添加实体到当前空间失败: {ex.Message}", ex);
             }
         }
@@ -215,7 +214,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"删除实体失败: {ex.Message}", ex);
+                _logger?.Error($"删除实体失败: {ex.Message}", ex.ToString());
                 return false;
             }
         }
@@ -265,7 +264,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"批量删除实体失败: {ex.Message}", ex);
+                _logger?.Error($"批量删除实体失败: {ex.Message}", ex.ToString());
                 return 0;
             }
         }
@@ -296,7 +295,7 @@ namespace DotNetARX.Services
                     var info = new DatabaseInfo
                     {
                         FileName = database.Filename ?? "未保存",
-                        Version = database.Version.ToString(),
+                        Version = "Unknown", // database.Version 在某些AutoCAD版本中不可用
                         CreationTime = database.Tdcreate,
                         ModificationTime = database.Tdupdate,
                         EntityCount = modelSpace.Cast<ObjectId>().Count(),
@@ -304,7 +303,7 @@ namespace DotNetARX.Services
                         BlockCount = blockTable.Cast<ObjectId>().Count(),
                         CurrentLayer = database.Clayer.IsValid ?
                             transManager.GetObject<LayerTableRecord>(database.Clayer, OpenMode.ForRead).Name : "未知",
-                        IsModified = database.HasSaveVersionInfo
+                        IsModified = !string.IsNullOrEmpty(database.Filename) // database.HasSaveVersionInfo 的替代方案
                     };
 
                     transManager.Commit();
@@ -313,7 +312,7 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"获取数据库信息失败: {ex.Message}", ex);
+                _logger?.Error($"获取数据库信息失败: {ex.Message}", ex.ToString());
                 throw new DatabaseOperationException($"获取数据库信息失败: {ex.Message}", ex);
             }
         }

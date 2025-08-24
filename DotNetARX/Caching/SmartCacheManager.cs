@@ -231,7 +231,7 @@ namespace DotNetARX.Caching
             _defaultExpiration = defaultExpiration ?? TimeSpan.FromMinutes(30);
             _cache = new ConcurrentDictionary<TKey, CacheItem<TValue>>();
             _accessOrder = new LinkedList<TKey>();
-            _logger = LogManager.GetLogger($"Cache_{name}");
+            _logger = LogManager.GetLogger(typeof(LRUSmartCache<TKey, TValue>));
 
             // 每5分钟清理一次过期项
             _cleanupTimer = new Timer(CleanupExpiredItems, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));

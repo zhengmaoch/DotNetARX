@@ -1,7 +1,6 @@
 using DotNetARX.Async;
 using DotNetARX.DependencyInjection;
 using DotNetARX.Events;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX
 {
@@ -871,7 +870,9 @@ namespace DotNetARX
             /// </summary>
             public static ObjectId CreateViewport(Point3d center, double width, double height)
             {
-                return LayoutService.CreateViewport(center, width, height);
+                // 获取当前布局ID
+                var layoutId = LayoutManager.Current.GetLayoutId(LayoutManager.Current.CurrentLayout);
+                return LayoutService.CreateViewport(layoutId, center, width, height);
             }
 
             /// <summary>
@@ -1125,14 +1126,15 @@ namespace DotNetARX
 
     /// <summary>
     /// DotNetARX 快捷访问类
-    /// 提供更简洁的API调用方式
+    /// 提供更简洁的API调用方式，直接调用ARX类的相应方法
+    /// 注意：与 CAD 主类不同，CAD 主类在 CAD.cs 和 API/CAD.*.cs 中定义
     /// </summary>
     public static partial class CAD
     {
         /// <summary>
         /// 实体操作快捷方式
         /// </summary>
-        public static class ATXEntity
+        public static class ARXEntity
         {
             public static bool Move(ObjectId id, Point3d from, Point3d to) => ARX.ARXEntity.Move(id, from, to);
 

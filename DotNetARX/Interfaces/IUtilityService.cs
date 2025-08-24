@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -46,5 +44,30 @@ namespace DotNetARX.Interfaces
         /// 取消亮显实体
         /// </summary>
         void UnhighlightEntities(IEnumerable<ObjectId> entityIds);
+
+        /// <summary>
+        /// 验证字符串是否匹配指定模式
+        /// </summary>
+        bool ValidateString(string value, string pattern);
+
+        /// <summary>
+        /// 安全类型转换
+        /// </summary>
+        T SafeConvert<T>(object value, T defaultValue = default);
+
+        /// <summary>
+        /// 获取AutoCAD安装路径
+        /// </summary>
+        string GetAutoCADPath();
+
+        /// <summary>
+        /// 亮显单个实体
+        /// </summary>
+        bool HighlightEntity(ObjectId entityId, bool highlight = true);
+
+        /// <summary>
+        /// 安全执行操作
+        /// </summary>
+        T SafeExecute<T>(Func<T> operation, T defaultValue = default);
     }
 }

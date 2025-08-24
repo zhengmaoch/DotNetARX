@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -18,9 +16,16 @@ namespace DotNetARX.Interfaces
         ObjectId CreateDimensionStyle(string styleName);
 
         /// <summary>
+        /// 创建标注样式（简化方法名）
+        /// </summary>
+        ObjectId CreateDimStyle(string styleName);
+
+        ObjectId CreateDimStyle(string styleName, double textHeight, double arrowSize);
+
+        /// <summary>
         /// 创建线型
         /// </summary>
-        ObjectId CreateLineType(string typeName, string pattern);
+        ObjectId CreateLineType(string typeName, string pattern, string description = "");
 
         /// <summary>
         /// 获取所有文字样式

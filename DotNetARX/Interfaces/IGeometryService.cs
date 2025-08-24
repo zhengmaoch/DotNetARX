@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -26,5 +24,10 @@ namespace DotNetARX.Interfaces
         /// 获取边界框
         /// </summary>
         Extents3d GetBoundingBox(IEnumerable<ObjectId> entityIds);
+
+        /// <summary>
+        /// 获取实体边界
+        /// </summary>
+        Extents3d GetEntityBounds(ObjectId entityId);
     }
 }

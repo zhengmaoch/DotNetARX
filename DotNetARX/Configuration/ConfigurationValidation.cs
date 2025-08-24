@@ -152,7 +152,7 @@ namespace DotNetARX.Configuration
                     if (Enum.TryParse<T>(stringValue, true, out _))
                         return ValidationResult.Success();
 
-                    var validValues = string.Join(", ", Enum.GetNames<T>());
+                    var validValues = string.Join(", ", Enum.GetNames(typeof(T)));
                     return ValidationResult.Failure($"无效的枚举值 '{stringValue}'。有效值: {validValues}");
                 }
 

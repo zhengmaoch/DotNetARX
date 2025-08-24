@@ -1,5 +1,3 @@
-
-
 namespace DotNetARX.Interfaces
 {
     /// <summary>
@@ -16,6 +14,11 @@ namespace DotNetARX.Interfaces
         /// 显示确认对话框
         /// </summary>
         bool ShowConfirmDialog(string message, string title = "确认");
+
+        /// <summary>
+        /// 显示确认对话框（别名方法）
+        /// </summary>
+        bool ShowConfirmationDialog(string message, string title = "确认");
 
         /// <summary>
         /// 获取用户输入

@@ -1,12 +1,11 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {
     /// <summary>
     /// 样式管理服务实现
     /// </summary>
-    public class StyleService : IStyleService
+    public partial class StyleService : IStyleService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
@@ -67,7 +66,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("TextStyleCreated", styleName, styleId));
+                _eventBus?.Publish(new StyleEvent("TextStyleCreated", styleId, "TextStyleCreated", "TextStyle"));
                 return styleId;
             }
             catch (Exception ex)
@@ -81,6 +80,14 @@ namespace DotNetARX.Services
         /// 创建标注样式
         /// </summary>
         public ObjectId CreateDimensionStyle(string styleName)
+        {
+            return CreateDimStyle(styleName);
+        }
+
+        /// <summary>
+        /// 创建标注样式（简化方法名）
+        /// </summary>
+        public ObjectId CreateDimStyle(string styleName)
         {
             using var operation = _performanceMonitor?.StartOperation("CreateDimensionStyle");
 
@@ -117,7 +124,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("DimensionStyleCreated", styleName, styleId));
+                _eventBus?.Publish(new StyleEvent("DimensionStyleCreated", styleId, "DimensionStyleCreated", "DimensionStyle"));
                 return styleId;
             }
             catch (Exception ex)
@@ -130,7 +137,7 @@ namespace DotNetARX.Services
         /// <summary>
         /// 创建线型
         /// </summary>
-        public ObjectId CreateLineType(string typeName, string pattern)
+        public ObjectId CreateLineType(string typeName, string pattern, string description = "")
         {
             using var operation = _performanceMonitor?.StartOperation("CreateLineType");
 
@@ -159,7 +166,7 @@ namespace DotNetARX.Services
                         var lineTypeRecord = new LinetypeTableRecord
                         {
                             Name = typeName,
-                            AsciiDescription = pattern
+                            AsciiDescription = string.IsNullOrEmpty(description) ? pattern : description
                         };
 
                         // 解析线型模式并设置
@@ -174,7 +181,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("LineTypeCreated", typeName, lineTypeId));
+                _eventBus?.Publish(new StyleEvent("LineTypeCreated", lineTypeId, "LineTypeCreated", "LineType"));
                 return lineTypeId;
             }
             catch (Exception ex)

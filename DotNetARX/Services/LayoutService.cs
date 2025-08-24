@@ -1,5 +1,4 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 using EventArgs = DotNetARX.Events.EventArgs;
 
 namespace DotNetARX.Services

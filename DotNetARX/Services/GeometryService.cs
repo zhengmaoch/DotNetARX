@@ -1,12 +1,11 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {
     /// <summary>
     /// 几何工具服务实现
     /// </summary>
-    public class GeometryService : IGeometryService
+    public partial class GeometryService : IGeometryService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
@@ -180,6 +179,40 @@ namespace DotNetARX.Services
             {
                 _logger?.Error($"获取边界框失败: {ex.Message}", ex);
                 throw new GeometryOperationException($"获取边界框失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 获取实体边界
+        /// </summary>
+        public Extents3d GetEntityBounds(ObjectId entityId)
+        {
+            using var operation = _performanceMonitor?.StartOperation("GetEntityBounds");
+
+            try
+            {
+                if (entityId.IsNull || !entityId.IsValid)
+                    throw new ArgumentException("实体ID无效");
+
+                var database = entityId.Database;
+
+                using (var transManager = new EnhancedTransactionManager(database))
+                {
+                    var entity = transManager.GetObject<Entity>(entityId, OpenMode.ForRead);
+                    if (entity == null)
+                        throw new InvalidOperationException($"无法获取实体: {entityId}");
+
+                    var bounds = entity.GeometricExtents;
+                    transManager.Commit();
+
+                    _logger?.Debug($"获取实体边界成功: {bounds.MinPoint} 到 {bounds.MaxPoint}");
+                    return bounds;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"获取实体边界失败: {ex.Message}", ex);
+                throw new GeometryOperationException($"获取实体边界失败: {ex.Message}", ex);
             }
         }
 

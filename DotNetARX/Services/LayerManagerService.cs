@@ -1,5 +1,4 @@
 using DotNetARX.Events;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {

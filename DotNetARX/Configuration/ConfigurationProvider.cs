@@ -145,6 +145,18 @@ namespace DotNetARX.Configuration
     /// </summary>
     public static class ConfigurationKeys
     {
+        // 常用的平级配置常量，向后兼容
+        public const string DefaultLayerName = "AutoCAD.DefaultLayer";
+
+        public const string DefaultTextStyle = "AutoCAD.DefaultTextStyle";
+        public const string DefaultTextHeight = "AutoCAD.DefaultTextHeight";
+        public const string DefaultBatchSize = "Performance.DefaultBatchSize";
+        public const string EnableLogging = "Logging.EnableLogging";
+        public const string LogLevel = "Logging.Level";
+        public const string AutoSaveInterval = "AutoCAD.AutoSaveIntervalMinutes";
+        public const string MaxUndoLevels = "AutoCAD.MaxUndoLevels";
+        public const string EnablePerformanceMonitoring = "Performance.EnablePerformanceMonitoring";
+
         /// <summary>
         /// 性能相关配置
         /// </summary>
@@ -156,6 +168,7 @@ namespace DotNetARX.Configuration
             public const string BatchTimeoutMs = "Performance.BatchTimeoutMs";
             public const string ThreadPoolSize = "Performance.ThreadPoolSize";
             public const string EnablePerformanceMonitoring = "Performance.EnablePerformanceMonitoring";
+            public const string DefaultBatchSize = "Performance.DefaultBatchSize";
 
             public static int GetCacheSize() => ConfigurationProvider.Get(CacheSize, 1000);
 
@@ -181,11 +194,12 @@ namespace DotNetARX.Configuration
         {
             public const string Level = "Logging.Level";
             public const string EnableFileLogging = "Logging.EnableFileLogging";
+            public const string EnableLogging = "Logging.EnableLogging";
             public const string MaxFileSizeMB = "Logging.MaxFileSizeMB";
             public const string LogDirectory = "Logging.LogDirectory";
             public const string RetentionDays = "Logging.RetentionDays";
 
-            public static LogLevel GetLevel() => ConfigurationProvider.Get(Level, LogLevel.Information);
+            public static LogLevel GetLevel() => ConfigurationProvider.Get(Level, LogLevel.Info);
 
             public static void SetLevel(LogLevel value) => ConfigurationProvider.Set(Level, value);
 
@@ -211,8 +225,11 @@ namespace DotNetARX.Configuration
             public const string DefaultColor = "AutoCAD.DefaultColor";
             public const string EnableTransactionLogging = "AutoCAD.EnableTransactionLogging";
             public const string DefaultLayer = "AutoCAD.DefaultLayer";
+            public const string DefaultTextStyle = "AutoCAD.DefaultTextStyle";
+            public const string DefaultTextHeight = "AutoCAD.DefaultTextHeight";
             public const string EnableAutoSave = "AutoCAD.EnableAutoSave";
             public const string AutoSaveIntervalMinutes = "AutoCAD.AutoSaveIntervalMinutes";
+            public const string MaxUndoLevels = "AutoCAD.MaxUndoLevels";
 
             public static double GetDefaultLineWeight() => ConfigurationProvider.Get(DefaultLineWeight, 0.25);
 

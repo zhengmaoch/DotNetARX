@@ -1,12 +1,11 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {
     /// <summary>
     /// 文档操作服务实现
     /// </summary>
-    public class DocumentService : IDocumentService
+    public partial class DocumentService : IDocumentService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
@@ -157,7 +156,7 @@ namespace DotNetARX.Services
                 info.FileName = Path.GetFileName(db.Filename) ?? "未命名";
                 info.FullPath = db.Filename ?? "";
                 info.IsSaved = IsDocumentSaved();
-                info.Version = db.Version.ToString();
+                info.Version = "Unknown"; // db.Version 在某些AutoCAD版本中不可用
 
                 // 文件信息
                 if (!string.IsNullOrEmpty(db.Filename) && File.Exists(db.Filename))

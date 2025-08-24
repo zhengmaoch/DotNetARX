@@ -1,3 +1,4 @@
+using DotNetARX.Caching;
 using System.Diagnostics;
 
 namespace DotNetARX.Diagnostics
@@ -82,7 +83,7 @@ namespace DotNetARX.Diagnostics
             {
                 using var transaction = database.TransactionManager.StartTransaction();
                 var modelSpace = transaction.GetObject(database.GetModelSpaceId(), OpenMode.ForRead) as BlockTableRecord;
-                return modelSpace?.Count ?? 0;
+                return modelSpace?.Cast<ObjectId>().Count() ?? 0;
             }
             catch
             {
@@ -96,7 +97,7 @@ namespace DotNetARX.Diagnostics
             {
                 using var transaction = database.TransactionManager.StartTransaction();
                 var layerTable = transaction.GetObject(database.LayerTableId, OpenMode.ForRead) as LayerTable;
-                return layerTable?.Count ?? 0;
+                return layerTable?.Cast<ObjectId>().Count() ?? 0;
             }
             catch
             {
@@ -106,9 +107,9 @@ namespace DotNetARX.Diagnostics
     }
 
     /// <summary>
-    /// 性能分析器
+    /// 性能诊断分析器
     /// </summary>
-    public class PerformanceAnalyzer : IDiagnosticAnalyzer
+    public class PerformanceDiagnosticAnalyzer : IDiagnosticAnalyzer
     {
         public string Name => "Performance Analyzer";
         public string Description => "分析系统性能指标和瓶颈";
@@ -264,7 +265,7 @@ namespace DotNetARX.Diagnostics
                 result.Metrics["CacheMemoryUsage"] = cacheStats.TotalMemoryUsage;
                 result.Metrics["CacheMemoryPressure"] = cacheStats.MemoryPressureLevel.ToString();
 
-                if (cacheStats.MemoryPressureLevel >= MemoryPressureLevel.High)
+                if (cacheStats.MemoryPressureLevel >= DotNetARX.Caching.MemoryPressureLevel.High)
                 {
                     if (result.Severity < DiagnosticSeverity.Warning)
                         result.Severity = DiagnosticSeverity.Warning;
@@ -441,7 +442,7 @@ namespace DotNetARX.Diagnostics
                     }
 
                     // 检查缓存使用情况
-                    var cacheStats = SmartCacheManager.GetStatistics();
+                    var cacheStats = DotNetARX.Caching.SmartCacheManager.GetStatistics();
                     result.Metrics["CacheHitRatio"] = cacheStats.HitRatio;
 
                     if (cacheStats.HitRatio < 0.7 && cacheStats.TotalItems > 10)

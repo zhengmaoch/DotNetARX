@@ -1,6 +1,5 @@
 using DotNetARX.DependencyInjection;
 using DotNetARX.Events;
-using DotNetARX.Interfaces;
 using DotNetARX.Services;
 
 namespace DotNetARX
@@ -73,7 +72,7 @@ namespace DotNetARX
 
             // 事件系统服务
             container.RegisterSingleton<IEventBus>(CADEventManager.DefaultBus);
-            container.RegisterSingleton(CADEventManager.Publisher);
+            container.RegisterSingleton<IEventPublisher>(CADEventManager.Publisher);
         }
 
         /// <summary>

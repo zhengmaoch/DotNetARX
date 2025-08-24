@@ -1,3 +1,4 @@
+using DotNetARX.Caching;
 using DotNetARX.Performance.Benchmarks;
 
 namespace DotNetARX.Performance
@@ -128,9 +129,9 @@ namespace DotNetARX.Performance
                 {
                     if (benchmarkResult.IsSuccessful && benchmarkResult.Summary != null)
                     {
-                        foreach (var benchmarkReport2 in benchmarkResult.Summary.Reports)
+                        foreach (var benchmarkReport in benchmarkResult.Summary.Reports)
                         {
-                            var operationName = $"{benchmarkResult2.BenchmarkCase.Descriptor.Type.Name}.{benchmarkResult2.BenchmarkCase.Descriptor.WorkloadMethod.Name}";
+                            var operationName = $"{benchmarkReport.BenchmarkCase.Descriptor.Type.Name}.{benchmarkReport.BenchmarkCase.Descriptor.WorkloadMethod.Name}";
                             var regression = PerformanceAnalyzer.CheckRegression(operationName);
 
                             if (regression.HasRegression)
@@ -276,8 +277,8 @@ namespace DotNetARX.Performance
             PerformanceAnalyzer.SetBaseline("CachePerformanceBenchmarks.SmartCache_Set", TimeSpan.FromMilliseconds(10), 10240);
             PerformanceAnalyzer.SetBaseline("CachePerformanceBenchmarks.SmartCache_Get", TimeSpan.FromMilliseconds(5), 1024);
 
-            PerformanceAnalyzer.SetBaseline("ServiceLocatorBenchmarks.GetService_Logger", TimeSpan.FromMicroseconds(100), 256);
-            PerformanceAnalyzer.SetBaseline("ServiceLocatorBenchmarks.GetService_ConfigManager", TimeSpan.FromMicroseconds(100), 256);
+            PerformanceAnalyzer.SetBaseline("ServiceLocatorBenchmarks.GetService_Logger", TimeSpan.FromTicks(1000), 256);
+            PerformanceAnalyzer.SetBaseline("ServiceLocatorBenchmarks.GetService_ConfigManager", TimeSpan.FromTicks(1000), 256);
         }
 
         /// <summary>

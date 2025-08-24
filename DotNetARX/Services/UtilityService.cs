@@ -1,5 +1,3 @@
-using DotNetARX.Interfaces;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -326,7 +324,7 @@ namespace DotNetARX.Services
         /// <summary>
         /// 安全执行操作并返回结果
         /// </summary>
-        public T SafeExecute<T>(Func<T> func, T defaultValue = default, string operationName = "未知操作")
+        public T SafeExecute<T>(Func<T> func, T defaultValue = default)
         {
             try
             {
@@ -334,13 +332,130 @@ namespace DotNetARX.Services
                     throw new ArgumentNullException(nameof(func));
 
                 var result = func();
-                _logger?.Debug($"安全执行成功: {operationName}");
+                _logger?.Debug("安全执行成功");
                 return result;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"安全执行失败 ({operationName}): {ex.Message}", ex);
+                _logger?.Error($"安全执行失败: {ex.Message}", ex);
                 return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// 验证字符串格式
+        /// </summary>
+        public bool ValidateString(string value, string pattern)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(pattern))
+                    return false;
+
+                return Regex.IsMatch(value, pattern);
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"验证字符串失败: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 安全转换类型
+        /// </summary>
+        public T SafeConvert<T>(object value, T defaultValue = default(T))
+        {
+            try
+            {
+                if (value == null)
+                    return defaultValue;
+
+                if (value is T directCast)
+                    return directCast;
+
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"安全转换失败: {ex.Message}", ex);
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// 亮显单个实体
+        /// </summary>
+        public bool HighlightEntity(ObjectId entityId, bool highlight = true)
+        {
+            try
+            {
+                if (entityId.IsNull || !entityId.IsValid)
+                    return false;
+
+                var database = entityId.Database;
+                using (var transManager = new EnhancedTransactionManager(database))
+                {
+                    var entity = transManager.GetObject<Entity>(entityId, OpenMode.ForRead);
+                    if (entity != null)
+                    {
+                        if (highlight)
+                            entity.Highlight();
+                        else
+                            entity.Unhighlight();
+                    }
+                    transManager.Commit();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"亮显实体失败: {ex.Message}", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 获取AutoCAD安装路径
+        /// </summary>
+        public string GetAutoCADPath()
+        {
+            try
+            {
+                // 尝试从AutoCAD应用程序获取路径
+                var doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
+                if (doc != null)
+                {
+                    // 获取AutoCAD应用程序路径
+                    var path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    return path;
+                }
+
+                // 备用方案：从环境变量或已知路径查找
+                var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                var possiblePaths = new[]
+                {
+                    Path.Combine(programFiles, "Autodesk"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Autodesk")
+                };
+
+                foreach (var basePath in possiblePaths)
+                {
+                    if (Directory.Exists(basePath))
+                    {
+                        var acadDirs = Directory.GetDirectories(basePath, "AutoCAD*", SearchOption.TopDirectoryOnly);
+                        if (acadDirs.Any())
+                            return acadDirs.First();
+                    }
+                }
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"获取AutoCAD路径失败: {ex.Message}", ex);
+                return string.Empty;
             }
         }
     }

@@ -1,3 +1,4 @@
+using DotNetARX.Extensions;
 using System.Runtime.CompilerServices;
 
 namespace DotNetARX
@@ -256,10 +257,11 @@ namespace DotNetARX
                     var context = AutoCADContext.Current;
                     var editor = context.Document.Editor;
 
+                    var pointCollection = new Point3dCollection(points);
                     var selectionOptions = new SelectionFilter(null);
                     var selectionMethod = crossingMode ?
-                        editor.SelectCrossingPolygon(points, selectionOptions) :
-                        editor.SelectPolygon(points, selectionOptions);
+                        editor.SelectCrossingPolygon(pointCollection, selectionOptions) :
+                        editor.SelectWindowPolygon(pointCollection, selectionOptions);
 
                     if (selectionMethod.Status == PromptStatus.OK)
                     {
@@ -403,7 +405,7 @@ namespace DotNetARX
 
                         try
                         {
-                            var closestPoint = entity.GetClosestPointTo(point, false);
+                            var closestPoint = entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
                             var distance = point.DistanceTo(closestPoint);
 
                             if (distance < minDistance &&

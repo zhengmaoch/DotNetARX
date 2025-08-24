@@ -1,5 +1,4 @@
 using DotNetARX.DependencyInjection;
-using DotNetARX.Interfaces;
 
 namespace DotNetARX.Services
 {

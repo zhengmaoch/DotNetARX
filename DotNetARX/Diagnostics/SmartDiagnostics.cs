@@ -22,7 +22,7 @@ namespace DotNetARX.Diagnostics
 
             // 注册内置分析器
             RegisterAnalyzer(new AutoCADContextAnalyzer());
-            RegisterAnalyzer(new PerformanceAnalyzer());
+            RegisterAnalyzer(new PerformanceAnalyzerImpl());
             RegisterAnalyzer(new MemoryLeakAnalyzer());
             RegisterAnalyzer(new ThreadSafetyAnalyzer());
             RegisterAnalyzer(new APIUsageAnalyzer());
@@ -203,7 +203,7 @@ namespace DotNetARX.Diagnostics
                 }
 
                 // 缓存系统检查
-                var cacheStats = SmartCacheManager.GetStatistics();
+                var cacheStats = DotNetARX.Caching.SmartCacheManager.GetStatistics();
                 if (cacheStats.HitRatio < 0.7) // 命中率低于70%
                 {
                     result.Issues.Add(new HealthIssue
@@ -327,8 +327,8 @@ namespace DotNetARX.Diagnostics
             var suggestions = new List<AutoFixSuggestion>();
 
             // 检查缓存状态
-            var cacheStats = SmartCacheManager.GetStatistics();
-            if (cacheStats.MemoryPressureLevel >= MemoryPressureLevel.High)
+            var cacheStats = DotNetARX.Caching.SmartCacheManager.GetStatistics();
+            if (cacheStats.MemoryPressureLevel >= DotNetARX.Caching.MemoryPressureLevel.High)
             {
                 suggestions.Add(new AutoFixSuggestion
                 {
