@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 数据库操作接口
     /// </summary>
-    public interface IDatabaseOperations
+    public interface IDatabaseService
     {
         /// <summary>
         /// 添加实体到模型空间

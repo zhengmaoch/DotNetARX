@@ -1,6 +1,6 @@
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("UtilityServiceTests")]
     public class UtilityServiceTests : TestBase
     {
         private UtilityService _utilityService;
@@ -29,7 +29,7 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_ValidPattern_ReturnsTrue")]
         public void ValidateString_ValidPattern_ReturnsTrue()
         {
             // Arrange
@@ -43,10 +43,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ValidateString"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ValidateString"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_InvalidPattern_ReturnsFalse")]
         public void ValidateString_InvalidPattern_ReturnsFalse()
         {
             // Arrange
@@ -60,7 +60,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_EmailPattern_WorksCorrectly")]
         public void ValidateString_EmailPattern_WorksCorrectly()
         {
             // Arrange
@@ -77,7 +77,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(invalidResult);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_NullValue_ReturnsFalse")]
         public void ValidateString_NullValue_ReturnsFalse()
         {
             // Arrange
@@ -91,7 +91,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_NullPattern_ReturnsFalse")]
         public void ValidateString_NullPattern_ReturnsFalse()
         {
             // Arrange
@@ -105,7 +105,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_EmptyValue_ReturnsFalse")]
         public void ValidateString_EmptyValue_ReturnsFalse()
         {
             // Arrange
@@ -119,7 +119,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_InvalidRegexPattern_ReturnsFalse")]
         public void ValidateString_InvalidRegexPattern_ReturnsFalse()
         {
             // Arrange
@@ -133,7 +133,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_ValidIntConversion_ReturnsCorrectValue")]
         public void SafeConvert_ValidIntConversion_ReturnsCorrectValue()
         {
             // Arrange
@@ -147,10 +147,10 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(123, result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SafeConvert"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SafeConvert"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_InvalidIntConversion_ReturnsDefault")]
         public void SafeConvert_InvalidIntConversion_ReturnsDefault()
         {
             // Arrange
@@ -164,7 +164,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(defaultValue, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_ValidDoubleConversion_ReturnsCorrectValue")]
         public void SafeConvert_ValidDoubleConversion_ReturnsCorrectValue()
         {
             // Arrange
@@ -178,7 +178,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(123.45, result, 1e-10);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_ValidBoolConversion_ReturnsCorrectValue")]
         public void SafeConvert_ValidBoolConversion_ReturnsCorrectValue()
         {
             // Arrange
@@ -192,7 +192,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(true, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_NullValue_ReturnsDefault")]
         public void SafeConvert_NullValue_ReturnsDefault()
         {
             // Arrange
@@ -206,7 +206,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(defaultValue, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_AlreadyCorrectType_ReturnsValue")]
         public void SafeConvert_AlreadyCorrectType_ReturnsValue()
         {
             // Arrange
@@ -220,7 +220,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(456, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_StringConversion_WorksCorrectly")]
         public void SafeConvert_StringConversion_WorksCorrectly()
         {
             // Arrange
@@ -234,7 +234,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual("123", result);
         }
 
-        [TestMethod]
+        [TestMethod("GetAutoCADPath_ReturnsValidPath")]
         public void GetAutoCADPath_ReturnsValidPath()
         {
             // Act
@@ -246,10 +246,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result != null);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetAutoCADPath"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetAutoCADPath"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("HighlightEntity_ValidEntity_ReturnsTrue")]
         public void HighlightEntity_ValidEntity_ReturnsTrue()
         {
             // Arrange
@@ -263,10 +263,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("HighlightEntity"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("HighlightEntity"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("HighlightEntity_InvalidEntity_ReturnsFalse")]
         public void HighlightEntity_InvalidEntity_ReturnsFalse()
         {
             // Arrange
@@ -279,7 +279,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("HighlightEntity_TurnOffHighlight_ReturnsTrue")]
         public void HighlightEntity_TurnOffHighlight_ReturnsTrue()
         {
             // Arrange
@@ -296,7 +296,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(unhighlightResult);
         }
 
-        [TestMethod]
+        [TestMethod("SafeExecute_ValidOperation_ReturnsResult")]
         public void SafeExecute_ValidOperation_ReturnsResult()
         {
             // Arrange
@@ -310,10 +310,10 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(42, result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SafeExecute"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SafeExecute"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SafeExecute_ThrowingOperation_ReturnsDefault")]
         public void SafeExecute_ThrowingOperation_ReturnsDefault()
         {
             // Arrange
@@ -327,7 +327,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(defaultValue, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeExecute_NullOperation_ReturnsDefault")]
         public void SafeExecute_NullOperation_ReturnsDefault()
         {
             // Arrange
@@ -341,7 +341,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(defaultValue, result);
         }
 
-        [TestMethod]
+        [TestMethod("SafeExecute_ComplexOperation_WorksCorrectly")]
         public void SafeExecute_ComplexOperation_WorksCorrectly()
         {
             // Arrange
@@ -363,7 +363,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual("Sum: 55", result);
         }
 
-        [TestMethod]
+        [TestMethod("ValidateString_MultiplePatterns_AllWork")]
         public void ValidateString_MultiplePatterns_AllWork()
         {
             // Arrange
@@ -388,7 +388,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("SafeConvert_DifferentTypes_AllWork")]
         public void SafeConvert_DifferentTypes_AllWork()
         {
             // Test different type conversions
@@ -404,7 +404,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(false, _utilityService.SafeConvert<bool>("invalid", false));
         }
 
-        [TestMethod]
+        [TestMethod("HighlightEntity_MultipleEntities_AllWork")]
         public void HighlightEntity_MultipleEntities_AllWork()
         {
             // Arrange

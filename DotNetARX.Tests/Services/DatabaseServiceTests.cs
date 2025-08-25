@@ -1,9 +1,9 @@
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
-    public class DatabaseOperationsServiceTests : TestBase
+    [TestClass("DatabaseServiceTests")]
+    public class DatabaseServiceTests : TestBase
     {
-        private DatabaseOperationsService _databaseOperationsService;
+        private DatabaseService _databaseService;
         private Mock<IEventBus> _mockEventBus;
         private Mock<IPerformanceMonitor> _mockPerformanceMonitor;
         private Mock<ILogger> _mockLogger;
@@ -23,35 +23,35 @@ namespace DotNetARX.Tests.Services
                 .Setup(x => x.StartOperation(It.IsAny<string>()))
                 .Returns(_mockOperation.Object);
 
-            _databaseOperationsService = new DatabaseOperationsService(
+            _databaseService = new DatabaseService(
                 _mockEventBus.Object,
                 _mockPerformanceMonitor.Object,
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("AddToModelSpace_ValidEntity_ReturnsValidObjectId")]
         public void AddToModelSpace_ValidEntity_ReturnsValidObjectId()
         {
             // Arrange
             var line = new Line(new Point3d(0, 0, 0), new Point3d(100, 100, 0));
 
             // Act
-            var result = _databaseOperationsService.AddToModelSpace(line);
+            var result = _databaseService.AddToModelSpace(line);
 
             // Assert
             Assert.IsFalse(result.IsNull);
             Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
+        [TestMethod("AddToModelSpace_NullEntity_ThrowsArgumentNullException")]
         public void AddToModelSpace_NullEntity_ThrowsArgumentNullException()
         {
             // Act & Assert
             Assert.ThrowsException<ArgumentNullException>(() =>
-                _databaseOperationsService.AddToModelSpace((Entity)null));
+                _databaseService.AddToModelSpace((Entity)null));
         }
 
-        [TestMethod]
+        [TestMethod("AddToModelSpace_BatchEntities_ReturnsObjectIdCollection")]
         public void AddToModelSpace_BatchEntities_ReturnsObjectIdCollection()
         {
             // Arrange
@@ -63,7 +63,7 @@ namespace DotNetARX.Tests.Services
             };
 
             // Act
-            var result = _databaseOperationsService.AddToModelSpace(entities);
+            var result = _databaseService.AddToModelSpace(entities);
 
             // Assert
             Assert.IsNotNull(result);
@@ -76,43 +76,43 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("AddToModelSpace_EmptyEntitiesList_ReturnsEmptyCollection")]
         public void AddToModelSpace_EmptyEntitiesList_ReturnsEmptyCollection()
         {
             // Arrange
             var entities = new List<Entity>();
 
             // Act
-            var result = _databaseOperationsService.AddToModelSpace(entities);
+            var result = _databaseService.AddToModelSpace(entities);
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [TestMethod("AddToModelSpace_NullEntitiesList_ThrowsArgumentNullException")]
         public void AddToModelSpace_NullEntitiesList_ThrowsArgumentNullException()
         {
             // Act & Assert
             Assert.ThrowsException<ArgumentNullException>(() =>
-                _databaseOperationsService.AddToModelSpace((IEnumerable<Entity>)null));
+                _databaseService.AddToModelSpace((IEnumerable<Entity>)null));
         }
 
-        [TestMethod]
+        [TestMethod("AddToPaperSpace_ValidEntity_ReturnsValidObjectId")]
         public void AddToPaperSpace_ValidEntity_ReturnsValidObjectId()
         {
             // Arrange
             var circle = new Circle(new Point3d(50, 50, 0), Vector3d.ZAxis, 25);
 
             // Act
-            var result = _databaseOperationsService.AddToPaperSpace(circle);
+            var result = _databaseService.AddToPaperSpace(circle);
 
             // Assert
             Assert.IsFalse(result.IsNull);
             Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
+        [TestMethod("AddToCurrentSpace_ValidEntity_ReturnsValidObjectId")]
         public void AddToCurrentSpace_ValidEntity_ReturnsValidObjectId()
         {
             // Arrange
@@ -124,14 +124,14 @@ namespace DotNetARX.Tests.Services
             };
 
             // Act
-            var result = _databaseOperationsService.AddToCurrentSpace(text);
+            var result = _databaseService.AddToCurrentSpace(text);
 
             // Assert
             Assert.IsFalse(result.IsNull);
             Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
+        [TestMethod("DeleteEntity_ValidEntity_ReturnsTrue")]
         public void DeleteEntity_ValidEntity_ReturnsTrue()
         {
             // Arrange
@@ -139,26 +139,26 @@ namespace DotNetARX.Tests.Services
             var entityId = AddEntityToModelSpace(line);
 
             // Act
-            var result = _databaseOperationsService.DeleteEntity(entityId);
+            var result = _databaseService.DeleteEntity(entityId);
 
             // Assert
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [TestMethod("DeleteEntity_InvalidEntity_ReturnsFalse")]
         public void DeleteEntity_InvalidEntity_ReturnsFalse()
         {
             // Arrange
             var invalidId = ObjectId.Null;
 
             // Act
-            var result = _databaseOperationsService.DeleteEntity(invalidId);
+            var result = _databaseService.DeleteEntity(invalidId);
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("DeleteEntities_ValidEntities_ReturnsDeleteCount")]
         public void DeleteEntities_ValidEntities_ReturnsDeleteCount()
         {
             // Arrange
@@ -176,37 +176,38 @@ namespace DotNetARX.Tests.Services
             }
 
             // Act
-            var result = _databaseOperationsService.DeleteEntities(entityIds.Cast<ObjectId>().ToList());
+            var result = _databaseService.DeleteEntities(entityIds.Cast<ObjectId>().ToList());
 
             // Assert
             Assert.AreEqual(3, result);
         }
 
-        [TestMethod]
+        [TestMethod("PurgeDatabase_EmptyDatabase_ReturnsZeroCount")]
         public void PurgeDatabase_EmptyDatabase_ReturnsZeroCount()
         {
             // Act
-            var result = _databaseOperationsService.PurgeDatabase();
+            var result = _databaseService.PurgeDatabase();
 
             // Assert
             Assert.AreEqual(0, result);
         }
 
-        [TestMethod]
+        [TestMethod("GetDatabaseInfo_ReturnsValidInfo")]
         public void GetDatabaseInfo_ReturnsValidInfo()
         {
             // Act
-            var result = _databaseOperationsService.GetDatabaseInfo();
+            var result = _databaseService.GetDatabaseInfo();
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.FileName);
+            Assert.IsFalse(string.IsNullOrEmpty(result.FileName));
+            Assert.IsTrue(result.EntityCount >= 0);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _databaseOperationsService?.Dispose();
+            _databaseService?.Dispose();
             base.TestCleanup();
         }
     }

@@ -71,16 +71,16 @@ namespace DotNetARX
         /// </summary>
         public static class ARXEntity
         {
-            private static IEntityOperations _operations;
+            private static IEntityService _operations;
 
-            private static IEntityOperations Operations
+            private static IEntityService Operations
             {
                 get
                 {
                     if (_operations == null)
                     {
                         EnsureInitialized();
-                        _operations = ServiceInitializer.GetRequiredService<IEntityOperations>();
+                        _operations = ServiceInitializer.GetRequiredService<IEntityService>();
                     }
                     return _operations;
                 }
@@ -365,16 +365,16 @@ namespace DotNetARX
         /// </summary>
         public static class ARXDatabase
         {
-            private static IDatabaseOperations _databaseOperations;
+            private static IDatabaseService _databaseOperations;
 
-            private static IDatabaseOperations DatabaseOperations
+            private static IDatabaseService DatabaseOperations
             {
                 get
                 {
                     if (_databaseOperations == null)
                     {
                         EnsureInitialized();
-                        _databaseOperations = ServiceInitializer.GetRequiredService<IDatabaseOperations>();
+                        _databaseOperations = ServiceInitializer.GetRequiredService<IDatabaseService>();
                     }
                     return _databaseOperations;
                 }
@@ -480,16 +480,16 @@ namespace DotNetARX
         /// </summary>
         public static class ARXDrawing
         {
-            private static IDrawingOperations _drawingOperations;
+            private static IDrawingService _drawingOperations;
 
-            private static IDrawingOperations DrawingOperations
+            private static IDrawingService DrawingOperations
             {
                 get
                 {
                     if (_drawingOperations == null)
                     {
                         EnsureInitialized();
-                        _drawingOperations = ServiceInitializer.GetRequiredService<IDrawingOperations>();
+                        _drawingOperations = ServiceInitializer.GetRequiredService<IDrawingService>();
                     }
                     return _drawingOperations;
                 }
@@ -1011,16 +1011,16 @@ namespace DotNetARX
         /// </summary>
         public static class ARXBlock
         {
-            private static IBlockOperations _blockOperations;
+            private static IBlockService _blockOperations;
 
-            private static IBlockOperations BlockOperations
+            private static IBlockService BlockOperations
             {
                 get
                 {
                     if (_blockOperations == null)
                     {
                         EnsureInitialized();
-                        _blockOperations = ServiceInitializer.GetRequiredService<IBlockOperations>();
+                        _blockOperations = ServiceInitializer.GetRequiredService<IBlockService>();
                     }
                     return _blockOperations;
                 }

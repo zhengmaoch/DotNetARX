@@ -3,13 +3,13 @@ namespace DotNetARX.Services
     /// <summary>
     /// 数据库操作服务实现
     /// </summary>
-    public class DatabaseOperationsService : IDatabaseOperations
+    public class DatabaseService : IDatabaseService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
         private readonly ILogger _logger;
 
-        public DatabaseOperationsService(
+        public DatabaseService(
             IEventBus eventBus = null,
             IPerformanceMonitor performanceMonitor = null,
             ILogger logger = null)

@@ -1,6 +1,6 @@
 namespace DotNetARX.Tests.Integration
 {
-    [TestClass]
+    [TestClass("ARXIntegrationTests")]
     public class ARXIntegrationTests : TestBase
     {
         [TestInitialize]
@@ -10,7 +10,7 @@ namespace DotNetARX.Tests.Integration
             ARX.Initialize();
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Entity_Operations_WorkCorrectly")]
         public void ARX_Entity_Operations_WorkCorrectly()
         {
             // Arrange
@@ -38,7 +38,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(validateResult);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Layer_Operations_WorkCorrectly")]
         public void ARX_Layer_Operations_WorkCorrectly()
         {
             // Test Create Layer
@@ -61,7 +61,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(setPropsResult);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Drawing_Operations_WorkCorrectly")]
         public void ARX_Drawing_Operations_WorkCorrectly()
         {
             // Test Draw Line
@@ -96,7 +96,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(mtextId.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Database_Operations_WorkCorrectly")]
         public void ARX_Database_Operations_WorkCorrectly()
         {
             // Test Add to Model Space
@@ -127,7 +127,7 @@ namespace DotNetARX.Tests.Integration
             Assert.AreEqual(2, deleteCount);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Selection_Operations_WorkCorrectly")]
         public void ARX_Selection_Operations_WorkCorrectly()
         {
             // Create some test entities
@@ -155,7 +155,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(entitiesAtPoint.Count >= 1);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Geometry_Operations_WorkCorrectly")]
         public void ARX_Geometry_Operations_WorkCorrectly()
         {
             // Test Distance Calculation
@@ -194,7 +194,7 @@ namespace DotNetARX.Tests.Integration
             Assert.AreEqual(10, bounds.MaxPoint.X, 1e-6);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Command_Operations_WorkCorrectly")]
         public void ARX_Command_Operations_WorkCorrectly()
         {
             // Test COM Command
@@ -214,7 +214,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(arxResult);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Document_Operations_WorkCorrectly")]
         public void ARX_Document_Operations_WorkCorrectly()
         {
             // Test Check Needs Save
@@ -236,7 +236,7 @@ namespace DotNetARX.Tests.Integration
             // In test environment, this might fail due to path issues
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Style_Operations_WorkCorrectly")]
         public void ARX_Style_Operations_WorkCorrectly()
         {
             // Test Create Text Style
@@ -252,7 +252,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(lineTypeId.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Table_Operations_WorkCorrectly")]
         public void ARX_Table_Operations_WorkCorrectly()
         {
             // Test Create Table
@@ -272,7 +272,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(mergeResult);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Layout_Operations_WorkCorrectly")]
         public void ARX_Layout_Operations_WorkCorrectly()
         {
             // Test Create Layout
@@ -292,7 +292,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(deleteResult);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_UI_Operations_WorkCorrectly")]
         public void ARX_UI_Operations_WorkCorrectly()
         {
             // Test Show Message (shouldn't throw)
@@ -319,7 +319,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsNotNull(fileName);
         }
 
-        [TestMethod]
+        [TestMethod("ARX_Utility_Operations_WorkCorrectly")]
         public void ARX_Utility_Operations_WorkCorrectly()
         {
             // Test Validate String
@@ -359,7 +359,7 @@ namespace DotNetARX.Tests.Integration
         }
     }
 
-    [TestClass]
+    [TestClass("CADIntegrationTests")]
     public class CADIntegrationTests : TestBase
     {
         [TestInitialize]
@@ -369,7 +369,7 @@ namespace DotNetARX.Tests.Integration
             ARX.Initialize();
         }
 
-        [TestMethod]
+        [TestMethod("CAD_EntityOperations_WorkCorrectly")]
         public void CAD_EntityOperations_WorkCorrectly()
         {
             // Test CAD shortcut methods
@@ -390,7 +390,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(CAD.Scale(entityId, new Point3d(50, 50, 0), 2.0));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_DrawingOperations_WorkCorrectly")]
         public void CAD_DrawingOperations_WorkCorrectly()
         {
             // Test drawing operations using CAD shortcuts
@@ -411,7 +411,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(polylineId.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CAD_LayerOperations_WorkCorrectly")]
         public void CAD_LayerOperations_WorkCorrectly()
         {
             // Test layer operations using CAD shortcuts
@@ -427,7 +427,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(CAD.ThawLayer("CADTestLayer"));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_DatabaseOperations_WorkCorrectly")]
         public void CAD_DatabaseOperations_WorkCorrectly()
         {
             // Test database operations using CAD shortcuts
@@ -447,7 +447,7 @@ namespace DotNetARX.Tests.Integration
             Assert.AreEqual(2, CAD.DeleteBatch(entityIds));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_GeometryOperations_WorkCorrectly")]
         public void CAD_GeometryOperations_WorkCorrectly()
         {
             // Test geometry operations using CAD shortcuts
@@ -462,7 +462,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(CAD.PointInPolygon(new Point3d(15, 15, 0), polygon));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_UIOperations_WorkCorrectly")]
         public void CAD_UIOperations_WorkCorrectly()
         {
             // Test UI operations using CAD shortcuts
@@ -487,7 +487,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsNotNull(fileResult);
         }
 
-        [TestMethod]
+        [TestMethod("CAD_StyleOperations_WorkCorrectly")]
         public void CAD_StyleOperations_WorkCorrectly()
         {
             // Test style operations using CAD shortcuts
@@ -498,7 +498,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(dimStyleId.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CAD_TableOperations_WorkCorrectly")]
         public void CAD_TableOperations_WorkCorrectly()
         {
             // Test table operations using CAD shortcuts
@@ -508,7 +508,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(CAD.SetTableCell(tableId, 0, 0, "Test Cell"));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_LayoutOperations_WorkCorrectly")]
         public void CAD_LayoutOperations_WorkCorrectly()
         {
             // Test layout operations using CAD shortcuts
@@ -519,7 +519,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsFalse(viewportId.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CAD_UtilityOperations_WorkCorrectly")]
         public void CAD_UtilityOperations_WorkCorrectly()
         {
             // Test utility operations using CAD shortcuts
@@ -532,7 +532,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(CAD.Highlight(entityId, false));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_LoggingOperations_WorkCorrectly")]
         public void CAD_LoggingOperations_WorkCorrectly()
         {
             // Test logging operations using CAD shortcuts
@@ -550,7 +550,7 @@ namespace DotNetARX.Tests.Integration
             }
         }
 
-        [TestMethod]
+        [TestMethod("CAD_PerformanceOperations_WorkCorrectly")]
         public void CAD_PerformanceOperations_WorkCorrectly()
         {
             // Test performance operations using CAD shortcuts
@@ -573,7 +573,7 @@ namespace DotNetARX.Tests.Integration
             }
         }
 
-        [TestMethod]
+        [TestMethod("CAD_CommandOperations_WorkCorrectly")]
         public void CAD_CommandOperations_WorkCorrectly()
         {
             // Test command operations using CAD shortcuts
@@ -581,7 +581,7 @@ namespace DotNetARX.Tests.Integration
             Assert.IsTrue(CAD.ExecuteAsync("ZOOM E"));
         }
 
-        [TestMethod]
+        [TestMethod("CAD_DocumentOperations_WorkCorrectly")]
         public void CAD_DocumentOperations_WorkCorrectly()
         {
             // Test document operations using CAD shortcuts

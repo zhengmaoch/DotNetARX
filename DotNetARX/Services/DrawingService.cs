@@ -3,23 +3,23 @@ namespace DotNetARX.Services
     /// <summary>
     /// 绘图操作服务实现
     /// </summary>
-    public class DrawingOperationsService : IDrawingOperations
+    public class DrawingService : IDrawingService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
         private readonly ILogger _logger;
-        private readonly IDatabaseOperations _databaseOperations;
+        private readonly IDatabaseService _databaseOperations;
 
-        public DrawingOperationsService(
+        public DrawingService(
             IEventBus eventBus = null,
             IPerformanceMonitor performanceMonitor = null,
             ILogger logger = null,
-            IDatabaseOperations databaseOperations = null)
+            IDatabaseService databaseOperations = null)
         {
             _eventBus = eventBus ?? ServiceContainer.Instance.GetService<IEventBus>();
             _performanceMonitor = performanceMonitor ?? ServiceContainer.Instance.GetService<IPerformanceMonitor>();
             _logger = logger ?? ServiceContainer.Instance.GetService<ILogger>();
-            _databaseOperations = databaseOperations ?? ServiceContainer.Instance.GetService<IDatabaseOperations>();
+            _databaseOperations = databaseOperations ?? ServiceContainer.Instance.GetService<IDatabaseService>();
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace DotNetARX.Services
         public new DateTime Timestamp { get; }
 
         public DrawingEvent(string eventType, ObjectId entityId, string entityType, string details = null)
-            : base("DrawingOperationsService")
+            : base("DrawingService")
         {
             EventType = eventType;
             EntityId = entityId;

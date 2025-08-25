@@ -76,7 +76,7 @@ namespace DotNetARX
         private static void RegisterBusinessServices(IServiceContainer container)
         {
             // 实体操作服务
-            container.RegisterTransient<IEntityOperations, EntityOperationService>();
+            container.RegisterTransient<IEntityService, EntityService>();
 
             // 图层管理服务
             container.RegisterTransient<ILayerManager, LayerManagerService>();
@@ -85,13 +85,13 @@ namespace DotNetARX
             container.RegisterTransient<ISelectionService, SelectionService>();
 
             // 数据库操作服务
-            container.RegisterTransient<IDatabaseOperations, DatabaseOperationsService>();
+            container.RegisterTransient<IDatabaseService, DatabaseService>();
 
             // 绘图操作服务
-            container.RegisterTransient<IDrawingOperations, DrawingOperationsService>();
+            container.RegisterTransient<IDrawingService, DrawingService>();
 
             // 块操作服务
-            container.RegisterTransient<IBlockOperations, BlockOperationsService>();
+            container.RegisterTransient<IBlockService, BlockService>();
 
             // 进度管理器
             container.RegisterTransient<IProgressManager, ProgressManagerService>();

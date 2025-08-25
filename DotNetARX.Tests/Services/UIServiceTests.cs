@@ -1,6 +1,6 @@
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("UIServiceTests")]
     public class UIServiceTests : TestBase
     {
         private UIService _uiService;
@@ -29,7 +29,7 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("ShowMessage_ValidParameters_DoesNotThrow")]
         public void ShowMessage_ValidParameters_DoesNotThrow()
         {
             // Arrange
@@ -48,13 +48,13 @@ namespace DotNetARX.Tests.Services
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowMessage"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowMessage"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<UIEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<UIEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ShowMessage_NullMessage_DoesNotThrow")]
         public void ShowMessage_NullMessage_DoesNotThrow()
         {
             // Arrange
@@ -73,7 +73,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ShowMessage_EmptyMessage_DoesNotThrow")]
         public void ShowMessage_EmptyMessage_DoesNotThrow()
         {
             // Arrange
@@ -92,7 +92,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ShowMessage_NullTitle_DoesNotThrow")]
         public void ShowMessage_NullTitle_DoesNotThrow()
         {
             // Arrange
@@ -111,7 +111,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ShowMessage_LongMessage_DoesNotThrow")]
         public void ShowMessage_LongMessage_DoesNotThrow()
         {
             // Arrange
@@ -130,7 +130,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ShowConfirmDialog_ValidParameters_ReturnsBoolean")]
         public void ShowConfirmDialog_ValidParameters_ReturnsBoolean()
         {
             // Arrange
@@ -145,10 +145,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result == true || result == false);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowConfirmationDialog"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowConfirmationDialog"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ShowConfirmDialog_NullMessage_ReturnsFalse")]
         public void ShowConfirmDialog_NullMessage_ReturnsFalse()
         {
             // Arrange
@@ -162,7 +162,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ShowConfirmDialog_EmptyMessage_ReturnsFalse")]
         public void ShowConfirmDialog_EmptyMessage_ReturnsFalse()
         {
             // Arrange
@@ -176,7 +176,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("GetUserInput_ValidParameters_ReturnsString")]
         public void GetUserInput_ValidParameters_ReturnsString()
         {
             // Arrange
@@ -191,10 +191,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsNotNull(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetUserInput"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetUserInput"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("GetUserInput_NullPrompt_ReturnsEmptyOrDefault")]
         public void GetUserInput_NullPrompt_ReturnsEmptyOrDefault()
         {
             // Arrange
@@ -205,11 +205,12 @@ namespace DotNetARX.Tests.Services
             var result = _uiService.GetUserInput(prompt, defaultValue);
 
             // Assert
-            Assert.IsNotNull(result);
+            // 可能返回默认值或空字符串
+            Assert.IsTrue(result == defaultValue || result == string.Empty);
         }
 
-        [TestMethod]
-        public void GetUserInput_EmptyPrompt_ReturnsEmptyOrDefault()
+        [TestMethod("GetUserInput_EmptyPrompt_ReturnsDefault")]
+        public void GetUserInput_EmptyPrompt_ReturnsDefault()
         {
             // Arrange
             var prompt = string.Empty;
@@ -219,185 +220,294 @@ namespace DotNetARX.Tests.Services
             var result = _uiService.GetUserInput(prompt, defaultValue);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.IsTrue(result == defaultValue || result == string.Empty);
         }
 
-        [TestMethod]
-        public void GetUserInput_NullDefaultValue_ReturnsString()
+        [TestMethod("ShowProgress_ValidParameters_DoesNotThrow")]
+        public void ShowProgress_ValidParameters_DoesNotThrow()
         {
             // Arrange
-            var prompt = "Enter value:";
-            string defaultValue = null;
+            var title = "Progress Test";
+            var message = "Processing...";
+            var maxProgress = 100;
 
-            // Act
-            var result = _uiService.GetUserInput(prompt, defaultValue);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void SelectFile_ValidParameters_ReturnsString()
-        {
-            // Arrange
-            var title = "Select File";
-            var filter = "DWG files (*.dwg)|*.dwg|All files (*.*)|*.*";
-            var forSave = false;
-
-            // Act
-            var result = _uiService.SelectFile(title, filter, forSave);
-
-            // Assert
-            // 在测试环境中，可能返回空字符串，这是正常的
-            Assert.IsNotNull(result);
+            // Act & Assert
+            try
+            {
+                using (var progress = _uiService.ShowProgress(title, message, maxProgress))
+                {
+                    Assert.IsNotNull(progress);
+                    progress.UpdateProgress(50, "Halfway done");
+                }
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowProgress should not throw exception: {ex.Message}");
+            }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SelectFile"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowProgress"), Times.Once());
         }
 
-        [TestMethod]
-        public void SelectFile_SaveMode_ReturnsString()
-        {
-            // Arrange
-            var title = "Save File";
-            var filter = "DWG files (*.dwg)|*.dwg";
-            var forSave = true;
-
-            // Act
-            var result = _uiService.SelectFile(title, filter, forSave);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void SelectFile_NullTitle_ReturnsString()
+        [TestMethod("ShowProgress_NullTitle_DoesNotThrow")]
+        public void ShowProgress_NullTitle_DoesNotThrow()
         {
             // Arrange
             string title = null;
-            var filter = "All files (*.*)|*.*";
-            var forSave = false;
+            var message = "Processing...";
+            var maxProgress = 100;
 
-            // Act
-            var result = _uiService.SelectFile(title, filter, forSave);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void SelectFile_NullFilter_ReturnsString()
-        {
-            // Arrange
-            var title = "Select File";
-            string filter = null;
-            var forSave = false;
-
-            // Act
-            var result = _uiService.SelectFile(title, filter, forSave);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void SelectFile_EmptyFilter_ReturnsString()
-        {
-            // Arrange
-            var title = "Select File";
-            var filter = string.Empty;
-            var forSave = false;
-
-            // Act
-            var result = _uiService.SelectFile(title, filter, forSave);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void SelectFile_CommonFilters_AllWork()
-        {
-            // Arrange
-            var filters = new[]
+            // Act & Assert
+            try
             {
-                "DWG files (*.dwg)|*.dwg",
-                "Text files (*.txt)|*.txt",
-                "All files (*.*)|*.*",
-                "CAD files (*.dwg;*.dxf)|*.dwg;*.dxf",
-                "Multiple types|*.dwg|*.dxf|*.txt|*.*"
+                using (var progress = _uiService.ShowProgress(title, message, maxProgress))
+                {
+                    Assert.IsNotNull(progress);
+                }
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowProgress with null title should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("HideProgress_DoesNotThrow")]
+        public void HideProgress_DoesNotThrow()
+        {
+            // Arrange
+            var title = "Progress Test";
+            var message = "Processing...";
+
+            // Act & Assert
+            try
+            {
+                _uiService.HideProgress();
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"HideProgress should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("SetStatusBarText_ValidText_DoesNotThrow")]
+        public void SetStatusBarText_ValidText_DoesNotThrow()
+        {
+            // Arrange
+            var text = "Status: Processing";
+
+            // Act & Assert
+            try
+            {
+                _uiService.SetStatusBarText(text);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"SetStatusBarText should not throw exception: {ex.Message}");
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetStatusBarText"), Times.Once());
+        }
+
+        [TestMethod("SetStatusBarText_NullText_DoesNotThrow")]
+        public void SetStatusBarText_NullText_DoesNotThrow()
+        {
+            // Arrange
+            string text = null;
+
+            // Act & Assert
+            try
+            {
+                _uiService.SetStatusBarText(text);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"SetStatusBarText with null text should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("ClearStatusBar_DoesNotThrow")]
+        public void ClearStatusBar_DoesNotThrow()
+        {
+            // Act & Assert
+            try
+            {
+                _uiService.ClearStatusBar();
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ClearStatusBar should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("ShowTooltip_ValidParameters_DoesNotThrow")]
+        public void ShowTooltip_ValidParameters_DoesNotThrow()
+        {
+            // Arrange
+            var message = "This is a tooltip";
+            var position = new Point3d(100, 100, 0);
+
+            // Act & Assert
+            try
+            {
+                _uiService.ShowTooltip(message, position);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowTooltip should not throw exception: {ex.Message}");
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowTooltip"), Times.Once());
+        }
+
+        [TestMethod("HideTooltip_DoesNotThrow")]
+        public void HideTooltip_DoesNotThrow()
+        {
+            // Act & Assert
+            try
+            {
+                _uiService.HideTooltip();
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"HideTooltip should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("RefreshUI_DoesNotThrow")]
+        public void RefreshUI_DoesNotThrow()
+        {
+            // Act & Assert
+            try
+            {
+                _uiService.RefreshUI();
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"RefreshUI should not throw exception: {ex.Message}");
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("RefreshUI"), Times.Once());
+        }
+
+        [TestMethod("EnableUI_EnablesInterface")]
+        public void EnableUI_EnablesInterface()
+        {
+            // Act
+            _uiService.EnableUI(true);
+
+            // Assert - 不应抛出异常
+            Assert.IsTrue(true);
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("EnableUI"), Times.Once());
+        }
+
+        [TestMethod("ShowContextMenu_ValidMenu_DoesNotThrow")]
+        public void ShowContextMenu_ValidMenu_DoesNotThrow()
+        {
+            // Arrange
+            var menuItems = new List<MenuItemDefinition>
+            {
+                new MenuItemDefinition { Text = "Item 1", Command = "CMD1" },
+                new MenuItemDefinition { Text = "Item 2", Command = "CMD2" }
             };
+            var position = new Point3d(50, 50, 0);
 
-            foreach (var filter in filters)
-            {
-                // Act
-                var result = _uiService.SelectFile("Test", filter, false);
-
-                // Assert
-                Assert.IsNotNull(result, $"Filter '{filter}' should not return null");
-            }
-        }
-
-        [TestMethod]
-        public void ShowMessage_MultipleCallsInSequence_AllSucceed()
-        {
             // Act & Assert
-            for (int i = 0; i < 3; i++)
+            try
             {
-                try
-                {
-                    _uiService.ShowMessage($"Message {i}", $"Title {i}");
-                    Assert.IsTrue(true);
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail($"Message {i} failed: {ex.Message}");
-                }
+                _uiService.ShowContextMenu(menuItems, position);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowContextMenu should not throw exception: {ex.Message}");
             }
 
-            // 验证性能监控被调用了3次
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowMessage"), Times.Exactly(3));
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowContextMenu"), Times.Once());
         }
 
-        [TestMethod]
-        public void ShowConfirmDialog_MultipleCallsInSequence_AllSucceed()
-        {
-            // Act & Assert
-            for (int i = 0; i < 3; i++)
-            {
-                try
-                {
-                    var result = _uiService.ShowConfirmationDialog($"Confirm {i}?", $"Confirmation {i}");
-                    Assert.IsTrue(result == true || result == false);
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail($"Confirmation {i} failed: {ex.Message}");
-                }
-            }
-
-            // 验证性能监控被调用了3次
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ShowConfirmationDialog"), Times.Exactly(3));
-        }
-
-        [TestMethod]
-        public void GetUserInput_MultipleCallsWithDifferentDefaults_AllSucceed()
+        [TestMethod("ShowContextMenu_EmptyMenu_DoesNotThrow")]
+        public void ShowContextMenu_EmptyMenu_DoesNotThrow()
         {
             // Arrange
-            var defaults = new[] { "Default1", "Default2", "", null };
+            var menuItems = new List<MenuItemDefinition>();
+            var position = new Point3d(50, 50, 0);
 
             // Act & Assert
-            foreach (var defaultValue in defaults)
+            try
             {
-                try
-                {
-                    var result = _uiService.GetUserInput("Enter value:", defaultValue);
-                    Assert.IsNotNull(result);
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail($"GetUserInput with default '{defaultValue}' failed: {ex.Message}");
-                }
+                _uiService.ShowContextMenu(menuItems, position);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowContextMenu with empty menu should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("ShowContextMenu_NullMenu_DoesNotThrow")]
+        public void ShowContextMenu_NullMenu_DoesNotThrow()
+        {
+            // Arrange
+            List<MenuItemDefinition> menuItems = null;
+            var position = new Point3d(50, 50, 0);
+
+            // Act & Assert
+            try
+            {
+                _uiService.ShowContextMenu(menuItems, position);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ShowContextMenu with null menu should not throw exception: {ex.Message}");
+            }
+        }
+
+        [TestMethod("SetCursor_ValidCursor_DoesNotThrow")]
+        public void SetCursor_ValidCursor_DoesNotThrow()
+        {
+            // Act & Assert
+            try
+            {
+                _uiService.SetCursor(CursorType.Wait);
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"SetCursor should not throw exception: {ex.Message}");
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetCursor"), Times.Once());
+        }
+
+        [TestMethod("ResetCursor_DoesNotThrow")]
+        public void ResetCursor_DoesNotThrow()
+        {
+            // Act & Assert
+            try
+            {
+                _uiService.ResetCursor();
+                Assert.IsTrue(true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"ResetCursor should not throw exception: {ex.Message}");
             }
         }
 

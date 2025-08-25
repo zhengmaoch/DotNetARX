@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("AutoCADContextTests")]
     public class AutoCADContextTests : TestBase
     {
         [TestInitialize]
@@ -20,7 +20,7 @@ namespace DotNetARX.Tests.Services
             base.TestCleanup();
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteBatch_VoidAction_ExecuteWithoutException")]
         public void ExecuteBatch_VoidAction_ExecuteWithoutException()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreNotEqual(entityIds[0], entityIds[1]);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteBatch_WithReturnValue_ReturnsExpectedValue")]
         public void ExecuteBatch_WithReturnValue_ReturnsExpectedValue()
         {
             // Arrange
@@ -88,7 +88,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteBatch_ReturnsObjectIdCollection_ReturnsCorrectCollection")]
         public void ExecuteBatch_ReturnsObjectIdCollection_ReturnsCorrectCollection()
         {
             // Arrange
@@ -123,7 +123,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreNotEqual(actualIds[0], actualIds[1]);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteSafely_WithReturnValue_ReturnsExpectedValue")]
         public void ExecuteSafely_WithReturnValue_ReturnsExpectedValue()
         {
             // Arrange
@@ -136,7 +136,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(expectedValue, actualValue);
         }
 
-        [TestMethod]
+        [TestMethod("GetObject_ValidObjectId_ReturnsCorrectObject")]
         public void GetObject_ValidObjectId_ReturnsCorrectObject()
         {
             // Arrange
@@ -169,7 +169,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(new Point3d(100, 100, 0), retrievedLine.EndPoint);
         }
 
-        [TestMethod]
+        [TestMethod("GetObject_NullObjectId_ReturnsNull")]
         public void GetObject_NullObjectId_ReturnsNull()
         {
             // Arrange
@@ -186,7 +186,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsNull(result);
         }
 
-        [TestMethod]
+        [TestMethod("GetObject_ErasedObjectId_ReturnsNull")]
         public void GetObject_ErasedObjectId_ReturnsNull()
         {
             // Arrange
@@ -217,7 +217,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsNull(result);
         }
 
-        [TestMethod]
+        [TestMethod("Commit_ValidTransaction_CommitsSuccessfully")]
         public void Commit_ValidTransaction_CommitsSuccessfully()
         {
             // Arrange & Act
@@ -245,7 +245,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsNotNull(retrievedLine);
         }
 
-        [TestMethod]
+        [TestMethod("Abort_ValidTransaction_AbortsSuccessfully")]
         public void Abort_ValidTransaction_AbortsSuccessfully()
         {
             // Arrange & Act

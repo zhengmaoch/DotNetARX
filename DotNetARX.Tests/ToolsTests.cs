@@ -3,7 +3,7 @@ namespace DotNetARX.Tests
     /// <summary>
     /// Tools类的单元测试
     /// </summary>
-    [TestClass]
+    [TestClass("ToolsTests")]
     public class ToolsTests
     {
         [TestInitialize]

@@ -20,15 +20,16 @@ global using DotNetARX.Logging;
 global using DotNetARX.Performance;
 global using DotNetARX.ResourceManagement;
 global using DotNetARX.Services;
+global using DotNetARX.Testing;
 
 // Testing
-global using Microsoft.CodeAnalysis;
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using Moq;
+global using Microsoft.CodeAnalysis;
 
 // System
 global using System;
 global using System.Collections.Generic;
+global using System.Drawing.Printing;
 global using System.Linq;
 global using System.Reflection;
 global using System.Runtime.InteropServices;

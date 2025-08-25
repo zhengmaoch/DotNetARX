@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 块操作接口
     /// </summary>
-    public interface IBlockOperations
+    public interface IBlockService
     {
         /// <summary>
         /// 创建块定义

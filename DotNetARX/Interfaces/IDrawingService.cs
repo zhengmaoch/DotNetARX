@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 绘图操作接口
     /// </summary>
-    public interface IDrawingOperations
+    public interface IDrawingService
     {
         /// <summary>
         /// 绘制直线

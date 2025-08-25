@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 实体操作接口
     /// </summary>
-    public interface IEntityOperations
+    public interface IEntityService
     {
         /// <summary>
         /// 移动实体

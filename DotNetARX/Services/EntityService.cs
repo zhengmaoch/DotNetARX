@@ -3,14 +3,14 @@ namespace DotNetARX.Services
     /// <summary>
     /// 实体操作服务实现
     /// </summary>
-    public class EntityOperationService : IEntityOperations
+    public class EntityService : IEntityService
     {
         private readonly ILogger _logger;
         private readonly IConfigurationManager _config;
 
-        public EntityOperationService(ILogger logger = null, IConfigurationManager config = null)
+        public EntityService(ILogger logger = null, IConfigurationManager config = null)
         {
-            _logger = logger ?? LogManager.GetLogger(typeof(EntityOperationService));
+            _logger = logger ?? LogManager.GetLogger(typeof(EntityService));
             _config = config ?? GlobalConfiguration.Instance;
         }
 

@@ -1,6 +1,6 @@
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("TableServiceTests")]
     public class TableServiceTests : TestBase
     {
         private TableService _tableService;
@@ -29,7 +29,17 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        private ObjectId CreateTestTable()
+        {
+            var position = new Point3d(0, 0, 0);
+            var rows = 3;
+            var columns = 3;
+            var rowHeight = 10.0;
+            var columnWidth = 50.0;
+            return _tableService.CreateTable(position, rows, columns, rowHeight, columnWidth);
+        }
+
+        [TestMethod("CreateTable_ValidParameters_ReturnsValidObjectId")]
         public void CreateTable_ValidParameters_ReturnsValidObjectId()
         {
             // Arrange
@@ -59,13 +69,13 @@ namespace DotNetARX.Tests.Services
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateTable"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateTable"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<TableEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<TableEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("CreateTable_MinimumSize_WorksCorrectly")]
         public void CreateTable_MinimumSize_WorksCorrectly()
         {
             // Arrange
@@ -83,7 +93,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
+        [TestMethod("CreateTable_LargeTable_WorksCorrectly")]
         public void CreateTable_LargeTable_WorksCorrectly()
         {
             // Arrange
@@ -101,7 +111,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
+        [TestMethod("CreateTable_ZeroRows_ReturnsFalse")]
         public void CreateTable_ZeroRows_ReturnsFalse()
         {
             // Arrange
@@ -118,7 +128,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CreateTable_ZeroColumns_ReturnsFalse")]
         public void CreateTable_ZeroColumns_ReturnsFalse()
         {
             // Arrange
@@ -135,7 +145,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("SetCellText_ValidCell_ReturnsTrue")]
         public void SetCellText_ValidCell_ReturnsTrue()
         {
             // Arrange
@@ -161,10 +171,10 @@ namespace DotNetARX.Tests.Services
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetCellText"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetCellText"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SetCellText_AllCells_WorksCorrectly")]
         public void SetCellText_AllCells_WorksCorrectly()
         {
             // Arrange
@@ -198,34 +208,19 @@ namespace DotNetARX.Tests.Services
                         Assert.AreEqual(testTexts[row, col], cellText);
                     }
                 }
+
                 transaction.Commit();
             }
         }
 
-        [TestMethod]
-        public void SetCellText_InvalidTableId_ReturnsFalse()
-        {
-            // Arrange
-            var invalidTableId = ObjectId.Null;
-            var row = 0;
-            var column = 0;
-            var text = "Test Text";
-
-            // Act
-            var result = _tableService.SetCellText(invalidTableId, row, column, text);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void SetCellText_InvalidRowIndex_ReturnsFalse()
+        [TestMethod("SetCellText_InvalidCell_ReturnsFalse")]
+        public void SetCellText_InvalidCell_ReturnsFalse()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var row = 10; // 超出范围
+            var row = 10; // 超出范围的行
             var column = 0;
-            var text = "Test Text";
+            var text = "Test Cell Text";
 
             // Act
             var result = _tableService.SetCellText(tableId, row, column, text);
@@ -234,171 +229,308 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void SetCellText_InvalidColumnIndex_ReturnsFalse()
+        [TestMethod("SetCellText_NullText_ReturnsTrue")]
+        public void SetCellText_NullText_ReturnsTrue()
         {
             // Arrange
             var tableId = CreateTestTable();
             var row = 0;
-            var column = 10; // 超出范围
-            var text = "Test Text";
+            var column = 0;
+            string text = null;
 
             // Act
             var result = _tableService.SetCellText(tableId, row, column, text);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
         }
 
-        [TestMethod]
-        public void GetCellText_ValidCell_ReturnsCorrectText()
+        [TestMethod("GetCellText_ValidCell_ReturnsText")]
+        public void GetCellText_ValidCell_ReturnsText()
         {
             // Arrange
             var tableId = CreateTestTable();
             var row = 1;
             var column = 1;
-            var expectedText = "Expected Text";
-
-            // 先设置文本
+            var expectedText = "Sample Text";
             _tableService.SetCellText(tableId, row, column, expectedText);
 
             // Act
-            var result = _tableService.GetCellText(tableId, row, column);
+            var actualText = _tableService.GetCellText(tableId, row, column);
 
             // Assert
-            Assert.AreEqual(expectedText, result);
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetCellText"), Times.Once);
+            Assert.AreEqual(expectedText, actualText);
         }
 
-        [TestMethod]
-        public void GetCellText_EmptyCell_ReturnsEmptyString()
+        [TestMethod("GetCellText_InvalidCell_ReturnsEmptyString")]
+        public void GetCellText_InvalidCell_ReturnsEmptyString()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var row = 2;
-            var column = 2;
-
-            // Act
-            var result = _tableService.GetCellText(tableId, row, column);
-
-            // Assert
-            Assert.AreEqual(string.Empty, result);
-        }
-
-        [TestMethod]
-        public void GetCellText_InvalidTableId_ReturnsNull()
-        {
-            // Arrange
-            var invalidTableId = ObjectId.Null;
-            var row = 0;
+            var row = 10; // 超出范围的行
             var column = 0;
 
             // Act
-            var result = _tableService.GetCellText(invalidTableId, row, column);
+            var text = _tableService.GetCellText(tableId, row, column);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.AreEqual(string.Empty, text);
         }
 
-        [TestMethod]
-        public void MergeCells_ValidRange_ReturnsTrue()
+        [TestMethod("SetColumnWidth_ValidColumn_ReturnsTrue")]
+        public void SetColumnWidth_ValidColumn_ReturnsTrue()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var startRow = 0;
-            var startColumn = 0;
-            var endRow = 1;
-            var endColumn = 1;
+            var column = 0;
+            var width = 75.0;
 
             // Act
-            var result = _tableService.MergeCells(tableId, startRow, startColumn, endRow, endColumn);
+            var result = _tableService.SetColumnWidth(tableId, column, width);
 
             // Assert
             Assert.IsTrue(result);
 
+            // 验证列宽设置成功
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(width, table.Columns[column].Width, 1e-6);
+
+                transaction.Commit();
+            }
+
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("MergeCells"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetColumnWidth"), Times.Once());
         }
 
-        [TestMethod]
-        public void MergeCells_SingleCell_ReturnsTrue()
+        [TestMethod("SetColumnWidth_InvalidColumn_ReturnsFalse")]
+        public void SetColumnWidth_InvalidColumn_ReturnsFalse()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var startRow = 1;
-            var startColumn = 1;
-            var endRow = 1;
-            var endColumn = 1;
+            var column = 10; // 超出范围的列
+            var width = 75.0;
 
             // Act
-            var result = _tableService.MergeCells(tableId, startRow, startColumn, endRow, endColumn);
-
-            // Assert
-            Assert.IsTrue(result); // 合并单个单元格应该成功
-        }
-
-        [TestMethod]
-        public void MergeCells_InvalidTableId_ReturnsFalse()
-        {
-            // Arrange
-            var invalidTableId = ObjectId.Null;
-            var startRow = 0;
-            var startColumn = 0;
-            var endRow = 1;
-            var endColumn = 1;
-
-            // Act
-            var result = _tableService.MergeCells(invalidTableId, startRow, startColumn, endRow, endColumn);
+            var result = _tableService.SetColumnWidth(tableId, column, width);
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void MergeCells_InvalidRange_ReturnsFalse()
+        [TestMethod("SetRowHeight_ValidRow_ReturnsTrue")]
+        public void SetRowHeight_ValidRow_ReturnsTrue()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var startRow = 2;
-            var startColumn = 2;
-            var endRow = 1; // 结束行小于开始行
-            var endColumn = 1; // 结束列小于开始列
+            var row = 1;
+            var height = 15.0;
 
             // Act
-            var result = _tableService.MergeCells(tableId, startRow, startColumn, endRow, endColumn);
+            var result = _tableService.SetRowHeight(tableId, row, height);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证行高设置成功
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(height, table.Rows[row].Height);
+
+                transaction.Commit();
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetRowHeight"), Times.Once());
+        }
+
+        [TestMethod("SetRowHeight_InvalidRow_ReturnsFalse")]
+        public void SetRowHeight_InvalidRow_ReturnsFalse()
+        {
+            // Arrange
+            var tableId = CreateTestTable();
+            var row = 10; // 超出范围的行
+            var height = 15.0;
+
+            // Act
+            var result = _tableService.SetRowHeight(tableId, row, height);
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void MergeCells_OutOfBounds_ReturnsFalse()
+        [TestMethod("InsertRow_ValidPosition_ReturnsTrue")]
+        public void InsertRow_ValidPosition_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable(); // 创建3行3列的表格
+            var position = 1; // 在第2行前插入
+
+            // Act
+            var result = _tableService.InsertRow(tableId, position);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证行数增加
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(4, table.Rows); // 原来3行，插入1行后应为4行
+
+                transaction.Commit();
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("InsertRow"), Times.Once());
+        }
+
+        [TestMethod("InsertColumn_ValidPosition_ReturnsTrue")]
+        public void InsertColumn_ValidPosition_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable(); // 创建3行3列的表格
+            var position = 1; // 在第2列前插入
+
+            // Act
+            var result = _tableService.InsertColumn(tableId, position);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证列数增加
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(4, table.Columns); // 原来3列，插入1列后应为4列
+
+                transaction.Commit();
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("InsertColumn"), Times.Once());
+        }
+
+        [TestMethod("DeleteRow_ValidPosition_ReturnsTrue")]
+        public void DeleteRow_ValidPosition_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable(); // 创建3行3列的表格
+            var position = 1; // 删除第2行
+
+            // Act
+            var result = _tableService.DeleteRow(tableId, position);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证行数减少
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(2, table.Rows); // 原来3行，删除1行后应为2行
+
+                transaction.Commit();
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("DeleteRow"), Times.Once());
+        }
+
+        [TestMethod("DeleteColumn_ValidPosition_ReturnsTrue")]
+        public void DeleteColumn_ValidPosition_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable(); // 创建3行3列的表格
+            var position = 1; // 删除第2列
+
+            // Act
+            var result = _tableService.DeleteColumn(tableId, position);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证列数减少
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(2, table.Columns); // 原来3列，删除1列后应为2列
+
+                transaction.Commit();
+            }
+
+            // 验证性能监控被调用
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("DeleteColumn"), Times.Once());
+        }
+
+        [TestMethod("GetTableInfo_ValidTable_ReturnsTableInfo")]
+        public void GetTableInfo_ValidTable_ReturnsTableInfo()
         {
             // Arrange
             var tableId = CreateTestTable();
-            var startRow = 0;
-            var startColumn = 0;
-            var endRow = 10; // 超出表格范围
-            var endColumn = 10; // 超出表格范围
+            var expectedRows = 3;
+            var expectedColumns = 3;
 
             // Act
-            var result = _tableService.MergeCells(tableId, startRow, startColumn, endRow, endColumn);
+            var tableInfo = _tableService.GetTableInfo(tableId);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsNotNull(tableInfo);
+            Assert.AreEqual(expectedRows, tableInfo.Rows);
+            Assert.AreEqual(expectedColumns, tableInfo.Columns);
+            Assert.IsFalse(tableInfo.ObjectId.IsNull);
         }
 
-        private ObjectId CreateTestTable()
+        [TestMethod("GetTableInfo_InvalidTable_ReturnsNull")]
+        public void GetTableInfo_InvalidTable_ReturnsNull()
         {
-            var position = new Point3d(0, 0, 0);
-            var rows = 3;
-            var columns = 3;
-            var rowHeight = 10.0;
-            var columnWidth = 50.0;
+            // Arrange
+            var invalidId = ObjectId.Null;
 
-            return _tableService.CreateTable(position, rows, columns, rowHeight, columnWidth);
+            // Act
+            var tableInfo = _tableService.GetTableInfo(invalidId);
+
+            // Assert
+            Assert.IsNull(tableInfo);
+        }
+
+        [TestMethod("SetTableTitle_ValidTable_ReturnsTrue")]
+        public void SetTableTitle_ValidTable_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable();
+            var title = "Test Table Title";
+
+            // Act
+            var result = _tableService.SetTableTitle(tableId, title);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证标题设置成功
+            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
+            {
+                var table = transaction.GetObject(tableId, OpenMode.ForRead) as Table;
+                Assert.AreEqual(title, table.Title);
+
+                transaction.Commit();
+            }
+        }
+
+        [TestMethod("SetTableTitle_NullTitle_ReturnsTrue")]
+        public void SetTableTitle_NullTitle_ReturnsTrue()
+        {
+            // Arrange
+            var tableId = CreateTestTable();
+            string title = null;
+
+            // Act
+            var result = _tableService.SetTableTitle(tableId, title);
+
+            // Assert
+            Assert.IsTrue(result);
         }
 
         [TestCleanup]

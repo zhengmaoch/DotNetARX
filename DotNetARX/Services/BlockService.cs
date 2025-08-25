@@ -3,13 +3,13 @@ namespace DotNetARX.Services
     /// <summary>
     /// 块操作服务实现
     /// </summary>
-    public class BlockOperationsService : IBlockOperations
+    public class BlockService : IBlockService
     {
         private readonly IEventBus _eventBus;
         private readonly IPerformanceMonitor _performanceMonitor;
         private readonly ILogger _logger;
 
-        public BlockOperationsService(
+        public BlockService(
             IEventBus eventBus = null,
             IPerformanceMonitor performanceMonitor = null,
             ILogger logger = null)
@@ -372,7 +372,7 @@ namespace DotNetARX.Services
         public new DateTime Timestamp { get; }
 
         public BlockEvent(string eventType, ObjectId objectId, string details)
-            : base("BlockOperationsService")
+            : base("BlockService")
         {
             EventType = eventType;
             ObjectId = objectId;

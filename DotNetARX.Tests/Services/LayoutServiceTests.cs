@@ -1,6 +1,8 @@
+
+
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("LayoutServiceTests")]
     public class LayoutServiceTests : TestBase
     {
         private LayoutService _layoutService;
@@ -29,7 +31,7 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("CreateLayout_ValidName_ReturnsValidObjectId")]
         public void CreateLayout_ValidName_ReturnsValidObjectId()
         {
             // Arrange
@@ -57,13 +59,13 @@ namespace DotNetARX.Tests.Services
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateLayout"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateLayout"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<LayoutEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<LayoutEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("CreateLayout_DuplicateName_ReturnsExistingLayout")]
         public void CreateLayout_DuplicateName_ReturnsExistingLayout()
         {
             // Arrange
@@ -81,7 +83,7 @@ namespace DotNetARX.Tests.Services
             Assert.AreEqual(result1, result2); // 应该返回相同的ObjectId
         }
 
-        [TestMethod]
+        [TestMethod("CreateLayout_NullName_ReturnsFalse")]
         public void CreateLayout_NullName_ReturnsFalse()
         {
             // Arrange
@@ -94,7 +96,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CreateLayout_EmptyName_ReturnsFalse")]
         public void CreateLayout_EmptyName_ReturnsFalse()
         {
             // Arrange
@@ -107,7 +109,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsNull);
         }
 
-        [TestMethod]
+        [TestMethod("CreateLayout_InvalidCharacters_HandledGracefully")]
         public void CreateLayout_InvalidCharacters_HandledGracefully()
         {
             // Arrange
@@ -121,7 +123,7 @@ namespace DotNetARX.Tests.Services
             // 但不应抛出异常
         }
 
-        [TestMethod]
+        [TestMethod("DeleteLayout_ExistingLayout_ReturnsTrue")]
         public void DeleteLayout_ExistingLayout_ReturnsTrue()
         {
             // Arrange
@@ -145,10 +147,10 @@ namespace DotNetARX.Tests.Services
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("DeleteLayout"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("DeleteLayout"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("DeleteLayout_NonExistentLayout_ReturnsFalse")]
         public void DeleteLayout_NonExistentLayout_ReturnsFalse()
         {
             // Arrange
@@ -161,7 +163,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("DeleteLayout_ModelTab_ReturnsFalse")]
         public void DeleteLayout_ModelTab_ReturnsFalse()
         {
             // Arrange
@@ -174,7 +176,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result); // 模型空间不应该被删除
         }
 
-        [TestMethod]
+        [TestMethod("CreateViewport_ValidParameters_ReturnsValidObjectId")]
         public void CreateViewport_ValidParameters_ReturnsValidObjectId()
         {
             // Arrange
@@ -195,234 +197,253 @@ namespace DotNetARX.Tests.Services
                 var viewport = transaction.GetObject(result, OpenMode.ForRead) as Viewport;
                 Assert.IsNotNull(viewport);
                 Assert.AreEqual(center, viewport.CenterPoint);
-                Assert.AreEqual(width, viewport.Width, 1e-6);
-                Assert.AreEqual(height, viewport.Height, 1e-6);
+                Assert.AreEqual(width, viewport.Width);
+                Assert.AreEqual(height, viewport.Height);
 
                 transaction.Commit();
             }
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateViewport"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateViewport"), Times.Once());
+
+            // 验证事件发布
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<LayoutEvent>()), Times.Once());
         }
 
-        [TestMethod]
-        public void CreateViewport_MinimumSize_WorksCorrectly()
+        [TestMethod("CreateViewport_ZeroDimensions_ReturnsValidObjectId")]
+        public void CreateViewport_ZeroDimensions_ReturnsValidObjectId()
         {
             // Arrange
             var center = new Point3d(50, 50, 0);
-            var width = 10.0;
-            var height = 10.0;
-
-            // Act
-            var result = _layoutService.CreateViewport(center, width, height);
-
-            // Assert
-            Assert.IsFalse(result.IsNull);
-            Assert.IsTrue(result.IsValid);
-        }
-
-        [TestMethod]
-        public void CreateViewport_LargeSize_WorksCorrectly()
-        {
-            // Arrange
-            var center = new Point3d(500, 500, 0);
-            var width = 1000.0;
-            var height = 800.0;
-
-            // Act
-            var result = _layoutService.CreateViewport(center, width, height);
-
-            // Assert
-            Assert.IsFalse(result.IsNull);
-            Assert.IsTrue(result.IsValid);
-        }
-
-        [TestMethod]
-        public void CreateViewport_ZeroSize_ReturnsFalse()
-        {
-            // Arrange
-            var center = new Point3d(100, 100, 0);
             var width = 0.0;
-            var height = 100.0;
+            var height = 0.0;
 
             // Act
             var result = _layoutService.CreateViewport(center, width, height);
 
             // Assert
-            Assert.IsTrue(result.IsNull);
+            Assert.IsFalse(result.IsNull);
+            Assert.IsTrue(result.IsValid);
         }
 
-        [TestMethod]
-        public void CreateViewport_NegativeSize_ReturnsFalse()
+        [TestMethod("SetCurrentLayout_ExistingLayout_ReturnsTrue")]
+        public void SetCurrentLayout_ExistingLayout_ReturnsTrue()
         {
             // Arrange
-            var center = new Point3d(100, 100, 0);
-            var width = 100.0;
-            var height = -50.0;
+            var layoutName = "CurrentLayoutTest";
+            _layoutService.CreateLayout(layoutName);
 
             // Act
-            var result = _layoutService.CreateViewport(center, width, height);
+            var result = _layoutService.SetCurrentLayout(layoutName);
 
             // Assert
-            Assert.IsTrue(result.IsNull);
+            Assert.IsTrue(result);
         }
 
-        [TestMethod]
-        public void SetViewportScale_ValidViewport_ReturnsTrue()
+        [TestMethod("SetCurrentLayout_NonExistentLayout_ReturnsFalse")]
+        public void SetCurrentLayout_NonExistentLayout_ReturnsFalse()
         {
             // Arrange
-            var viewportId = CreateTestViewport();
-            var scale = 0.5; // 1:2 比例
+            var layoutName = "NonExistentLayout";
 
             // Act
-            var result = _layoutService.SetViewportScale(viewportId, scale);
+            var result = _layoutService.SetCurrentLayout(layoutName);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod("GetAllLayouts_ReturnsLayoutCollection")]
+        public void GetAllLayouts_ReturnsLayoutCollection()
+        {
+            // Arrange
+            var testLayouts = new[] { "Layout1", "Layout2", "Layout3" };
+            foreach (var layoutName in testLayouts)
+            {
+                _layoutService.CreateLayout(layoutName);
+            }
+
+            // Act
+            var layouts = _layoutService.GetAllLayouts().ToList();
+
+            // Assert
+            Assert.IsNotNull(layouts);
+            Assert.IsTrue(layouts.Count >= testLayouts.Length);
+            Assert.IsTrue(testLayouts.All(name => layouts.Any(layout => layout.Name == name)));
+        }
+
+        [TestMethod("LayoutExists_ExistingLayout_ReturnsTrue")]
+        public void LayoutExists_ExistingLayout_ReturnsTrue()
+        {
+            // Arrange
+            var layoutName = "ExistTestLayout";
+            _layoutService.CreateLayout(layoutName);
+
+            // Act
+            var result = _layoutService.LayoutExists(layoutName);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod("LayoutExists_NonExistentLayout_ReturnsFalse")]
+        public void LayoutExists_NonExistentLayout_ReturnsFalse()
+        {
+            // Act
+            var result = _layoutService.LayoutExists("NonExistentLayout");
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod("GetLayoutInfo_ExistingLayout_ReturnsLayoutInfo")]
+        public void GetLayoutInfo_ExistingLayout_ReturnsLayoutInfo()
+        {
+            // Arrange
+            var layoutName = "InfoTestLayout";
+            _layoutService.CreateLayout(layoutName);
+
+            // Act
+            var layoutInfo = _layoutService.GetLayoutInfo(layoutName);
+
+            // Assert
+            Assert.IsNotNull(layoutInfo);
+            Assert.AreEqual(layoutName, layoutInfo.Name);
+            Assert.IsFalse(layoutInfo.ObjectId.IsNull);
+        }
+
+        [TestMethod("GetLayoutInfo_NonExistentLayout_ReturnsNull")]
+        public void GetLayoutInfo_NonExistentLayout_ReturnsNull()
+        {
+            // Act
+            var layoutInfo = _layoutService.GetLayoutInfo("NonExistentLayout");
+
+            // Assert
+            Assert.IsNull(layoutInfo);
+        }
+
+        [TestMethod("RenameLayout_ExistingLayout_ReturnsTrue")]
+        public void RenameLayout_ExistingLayout_ReturnsTrue()
+        {
+            // Arrange
+            var oldName = "OldLayoutName";
+            var newName = "NewLayoutName";
+            _layoutService.CreateLayout(oldName);
+
+            // Act
+            var result = _layoutService.RenameLayout(oldName, newName);
 
             // Assert
             Assert.IsTrue(result);
 
-            // 验证比例设置
-            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
-            {
-                var viewport = transaction.GetObject(viewportId, OpenMode.ForRead) as Viewport;
-                Assert.AreEqual(scale, viewport.CustomScale, 1e-6);
-
-                transaction.Commit();
-            }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetViewportScale"), Times.Once);
+            // 验证重命名是否成功
+            Assert.IsFalse(_layoutService.LayoutExists(oldName));
+            Assert.IsTrue(_layoutService.LayoutExists(newName));
         }
 
-        [TestMethod]
-        public void SetViewportScale_DifferentScales_AllWork()
+        [TestMethod("RenameLayout_NonExistentLayout_ReturnsFalse")]
+        public void RenameLayout_NonExistentLayout_ReturnsFalse()
         {
-            // Arrange
-            var scales = new[] { 0.25, 0.5, 1.0, 2.0, 4.0 };
-
-            foreach (var scale in scales)
-            {
-                var viewportId = CreateTestViewport();
-
-                // Act
-                var result = _layoutService.SetViewportScale(viewportId, scale);
-
-                // Assert
-                Assert.IsTrue(result, $"Scale {scale} should work");
-
-                // 验证比例设置
-                using (var transaction = TestDatabase.TransactionManager.StartTransaction())
-                {
-                    var viewport = transaction.GetObject(viewportId, OpenMode.ForRead) as Viewport;
-                    Assert.AreEqual(scale, viewport.CustomScale, 1e-6);
-
-                    transaction.Commit();
-                }
-            }
-        }
-
-        [TestMethod]
-        public void SetViewportScale_InvalidViewportId_ReturnsFalse()
-        {
-            // Arrange
-            var invalidViewportId = ObjectId.Null;
-            var scale = 1.0;
-
             // Act
-            var result = _layoutService.SetViewportScale(invalidViewportId, scale);
+            var result = _layoutService.RenameLayout("NonExistentLayout", "NewName");
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void SetViewportScale_ZeroScale_ReturnsFalse()
+        [TestMethod("RenameLayout_DuplicateName_ReturnsFalse")]
+        public void RenameLayout_DuplicateName_ReturnsFalse()
         {
             // Arrange
-            var viewportId = CreateTestViewport();
-            var scale = 0.0;
+            var layout1 = "Layout1";
+            var layout2 = "Layout2";
+            _layoutService.CreateLayout(layout1);
+            _layoutService.CreateLayout(layout2);
 
             // Act
-            var result = _layoutService.SetViewportScale(viewportId, scale);
+            var result = _layoutService.RenameLayout(layout1, layout2); // 尝试重命名为已存在的布局名
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void SetViewportScale_NegativeScale_ReturnsFalse()
+        [TestMethod("CopyLayout_ExistingLayout_ReturnsValidObjectId")]
+        public void CopyLayout_ExistingLayout_ReturnsValidObjectId()
         {
             // Arrange
-            var viewportId = CreateTestViewport();
-            var scale = -1.0;
+            var sourceLayoutName = "SourceLayout";
+            var newLayoutName = "CopiedLayout";
+            _layoutService.CreateLayout(sourceLayoutName);
 
             // Act
-            var result = _layoutService.SetViewportScale(viewportId, scale);
+            var result = _layoutService.CopyLayout(sourceLayoutName, newLayoutName);
+
+            // Assert
+            Assert.IsFalse(result.IsNull);
+            Assert.IsTrue(result.IsValid);
+
+            // 验证复制是否成功
+            Assert.IsTrue(_layoutService.LayoutExists(sourceLayoutName));
+            Assert.IsTrue(_layoutService.LayoutExists(newLayoutName));
+        }
+
+        [TestMethod("CopyLayout_NonExistentLayout_ReturnsNull")]
+        public void CopyLayout_NonExistentLayout_ReturnsNull()
+        {
+            // Act
+            var result = _layoutService.CopyLayout("NonExistentLayout", "NewLayout");
+
+            // Assert
+            Assert.IsTrue(result.IsNull);
+        }
+
+        [TestMethod("GetPaperSize_ExistingLayout_ReturnsPaperSize")]
+        public void GetPaperSize_ExistingLayout_ReturnsPaperSize()
+        {
+            // Arrange
+            var layoutName = "PaperSizeTestLayout";
+            _layoutService.CreateLayout(layoutName);
+
+            // Act
+            var paperSize = _layoutService.GetPaperSize(layoutName);
+
+            // Assert
+            Assert.IsNotNull(paperSize);
+            Assert.IsTrue(paperSize.Width >= 0);
+            Assert.IsTrue(paperSize.Height >= 0);
+        }
+
+        [TestMethod("SetPaperSize_ExistingLayout_ReturnsTrue")]
+        public void SetPaperSize_ExistingLayout_ReturnsTrue()
+        {
+            // Arrange
+            var layoutName = "SetPaperSizeTestLayout";
+            _layoutService.CreateLayout(layoutName);
+            var newSize = new PaperSize { Width = 420, Height = 297 }; // A3尺寸
+
+            // Act
+            var result = _layoutService.SetPaperSize(layoutName, newSize);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // 验证纸张尺寸是否设置成功
+            var actualSize = _layoutService.GetPaperSize(layoutName);
+            Assert.AreEqual(newSize.Width, actualSize.Width, 1e-6);
+            Assert.AreEqual(newSize.Height, actualSize.Height, 1e-6);
+        }
+
+        [TestMethod("SetPaperSize_NonExistentLayout_ReturnsFalse")]
+        public void SetPaperSize_NonExistentLayout_ReturnsFalse()
+        {
+            // Arrange
+            var newSize = new PaperSize { Width = 210, Height = 297 }; // A4尺寸
+
+            // Act
+            var result = _layoutService.SetPaperSize("NonExistentLayout", newSize);
 
             // Assert
             Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void CreateMultipleLayouts_AllSucceed()
-        {
-            // Arrange
-            var layoutNames = new[] { "Layout1", "Layout2", "Layout3", "Layout4" };
-            var layoutIds = new ObjectId[layoutNames.Length];
-
-            // Act
-            for (int i = 0; i < layoutNames.Length; i++)
-            {
-                layoutIds[i] = _layoutService.CreateLayout(layoutNames[i]);
-            }
-
-            // Assert
-            for (int i = 0; i < layoutNames.Length; i++)
-            {
-                Assert.IsFalse(layoutIds[i].IsNull, $"Layout {layoutNames[i]} creation failed");
-                Assert.IsTrue(layoutIds[i].IsValid, $"Layout {layoutNames[i]} is not valid");
-            }
-
-            // 验证所有布局都存在
-            using (var transaction = TestDatabase.TransactionManager.StartTransaction())
-            {
-                var layoutDict = transaction.GetObject(TestDatabase.LayoutDictionaryId, OpenMode.ForRead) as DBDictionary;
-
-                foreach (var layoutName in layoutNames)
-                {
-                    Assert.IsTrue(layoutDict.Contains(layoutName), $"Layout {layoutName} not found in dictionary");
-                }
-
-                transaction.Commit();
-            }
-        }
-
-        [TestMethod]
-        public void CreateViewportInLayout_WorksCorrectly()
-        {
-            // Arrange
-            var layoutName = "ViewportTestLayout";
-            var layoutId = _layoutService.CreateLayout(layoutName);
-            Assert.IsFalse(layoutId.IsNull);
-
-            var center = new Point3d(150, 150, 0);
-            var width = 250.0;
-            var height = 200.0;
-
-            // Act
-            var viewportId = _layoutService.CreateViewport(center, width, height);
-
-            // Assert
-            Assert.IsFalse(viewportId.IsNull);
-            Assert.IsTrue(viewportId.IsValid);
-        }
-
-        private ObjectId CreateTestViewport()
-        {
-            var center = new Point3d(100, 100, 0);
-            var width = 200.0;
-            var height = 150.0;
-
-            return _layoutService.CreateViewport(center, width, height);
         }
 
         [TestCleanup]

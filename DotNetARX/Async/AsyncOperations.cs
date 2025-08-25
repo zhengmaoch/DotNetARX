@@ -48,7 +48,7 @@ namespace DotNetARX.Async
     /// <summary>
     /// 异步实体操作服务
     /// </summary>
-    public class AsyncEntityOperationService : IEntityOperations
+    public class AsyncEntityOperationService : IEntityService
     {
         private readonly ILogger _logger;
         private readonly IPerformanceMonitor _performanceMonitor;

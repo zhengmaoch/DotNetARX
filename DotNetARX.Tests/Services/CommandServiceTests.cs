@@ -1,6 +1,8 @@
+using Microsoft.VisualStudio.Telemetry;
+
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("CommandServiceTests")]
     public class CommandServiceTests : TestBase
     {
         private CommandService _commandService;
@@ -29,7 +31,7 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandCOM_ValidCommand_ReturnsTrue")]
         public void ExecuteCommandCOM_ValidCommand_ReturnsTrue()
         {
             // Arrange
@@ -42,13 +44,13 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandCOM"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandCOM"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandCOM_NullCommand_ReturnsFalse")]
         public void ExecuteCommandCOM_NullCommand_ReturnsFalse()
         {
             // Arrange
@@ -61,7 +63,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandCOM_EmptyCommand_ReturnsFalse")]
         public void ExecuteCommandCOM_EmptyCommand_ReturnsFalse()
         {
             // Arrange
@@ -74,7 +76,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandAsync_ValidCommand_ReturnsTrue")]
         public void ExecuteCommandAsync_ValidCommand_ReturnsTrue()
         {
             // Arrange
@@ -87,13 +89,13 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandAsync"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandAsync"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandQueue_ValidCommand_ReturnsTrue")]
         public void ExecuteCommandQueue_ValidCommand_ReturnsTrue()
         {
             // Arrange
@@ -106,10 +108,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandQueue"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandQueue"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteARXCommand_ValidCommand_ReturnsTrue")]
         public void ExecuteARXCommand_ValidCommand_ReturnsTrue()
         {
             // Arrange
@@ -123,10 +125,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteARXCommand"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteARXCommand"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteARXCommand_NullArgs_ReturnsTrue")]
         public void ExecuteARXCommand_NullArgs_ReturnsTrue()
         {
             // Arrange
@@ -140,7 +142,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteARXCommand_EmptyArgs_ReturnsTrue")]
         public void ExecuteARXCommand_EmptyArgs_ReturnsTrue()
         {
             // Arrange
@@ -154,7 +156,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandCOM_InvalidCommand_HandleException")]
         public void ExecuteCommandCOM_InvalidCommand_HandleException()
         {
             // Arrange
@@ -173,7 +175,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("ExecuteCommandAsync_MultipleCommands_AllExecuted")]
         public void ExecuteCommandAsync_MultipleCommands_AllExecuted()
         {
             // Arrange

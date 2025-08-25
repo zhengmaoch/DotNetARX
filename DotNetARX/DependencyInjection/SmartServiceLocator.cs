@@ -311,9 +311,9 @@ namespace DotNetARX.DependencyInjection
         private static void RegisterCoreServices(IServiceContainer container)
         {
             // 实体操作服务
-            if (IsTypeAvailable("DotNetARX.Services.EntityOperationService"))
+            if (IsTypeAvailable("DotNetARX.Services.EntityService"))
             {
-                container.RegisterTransient<IEntityOperations, Services.EntityOperationService>();
+                container.RegisterTransient<IEntityService, Services.EntityService>();
             }
 
             // 图层管理服务

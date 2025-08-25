@@ -1,6 +1,6 @@
 namespace DotNetARX.Tests.Services
 {
-    [TestClass]
+    [TestClass("DocumentServiceTests")]
     public class DocumentServiceTests : TestBase
     {
         private DocumentService _documentService;
@@ -29,7 +29,7 @@ namespace DotNetARX.Tests.Services
                 _mockLogger.Object);
         }
 
-        [TestMethod]
+        [TestMethod("CheckDocumentNeedsSave_NewDocument_ReturnsFalse")]
         public void CheckDocumentNeedsSave_NewDocument_ReturnsFalse()
         {
             // Act
@@ -39,10 +39,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CheckDocumentNeedsSave"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("CheckDocumentNeedsSave"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocument_ValidDocument_ReturnsTrue")]
         public void SaveDocument_ValidDocument_ReturnsTrue()
         {
             // Act
@@ -51,13 +51,13 @@ namespace DotNetARX.Tests.Services
             // Assert
             // 在测试环境中，文档可能无法真正保存，但不应抛出异常
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SaveDocument"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SaveDocument"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<DocumentEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<DocumentEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocumentAs_ValidPath_ReturnsResult")]
         public void SaveDocumentAs_ValidPath_ReturnsResult()
         {
             // Arrange
@@ -69,13 +69,13 @@ namespace DotNetARX.Tests.Services
             // Assert
             // 在测试环境中可能无法保存到指定路径，但不应抛出异常
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SaveDocumentAs"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("SaveDocumentAs"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<DocumentEvent>()), Times.Once);
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<DocumentEvent>()), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocumentAs_NullPath_ReturnsFalse")]
         public void SaveDocumentAs_NullPath_ReturnsFalse()
         {
             // Arrange
@@ -88,7 +88,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocumentAs_EmptyPath_ReturnsFalse")]
         public void SaveDocumentAs_EmptyPath_ReturnsFalse()
         {
             // Arrange
@@ -101,7 +101,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocumentAs_InvalidPath_ReturnsFalse")]
         public void SaveDocumentAs_InvalidPath_ReturnsFalse()
         {
             // Arrange
@@ -114,7 +114,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [TestMethod("GetDocumentInfo_ValidDocument_ReturnsInfo")]
         public void GetDocumentInfo_ValidDocument_ReturnsInfo()
         {
             // Act
@@ -129,10 +129,10 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.LastModified <= DateTime.Now);
 
             // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetDocumentInfo"), Times.Once);
+            _mockPerformanceMonitor.Verify(x => x.StartOperation("GetDocumentInfo"), Times.Once());
         }
 
-        [TestMethod]
+        [TestMethod("GetDocumentInfo_CheckAllProperties_ValidValues")]
         public void GetDocumentInfo_CheckAllProperties_ValidValues()
         {
             // Act
@@ -152,7 +152,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsTrue(result.IsModified == true || result.IsModified == false);
         }
 
-        [TestMethod]
+        [TestMethod("CheckDocumentNeedsSave_AfterModification_ReturnsTrue")]
         public void CheckDocumentNeedsSave_AfterModification_ReturnsTrue()
         {
             // Arrange - 修改文档以触发需要保存状态
@@ -181,7 +181,7 @@ namespace DotNetARX.Tests.Services
             }
         }
 
-        [TestMethod]
+        [TestMethod("SaveDocument_MultipleCallsInSequence_AllSucceed")]
         public void SaveDocument_MultipleCallsInSequence_AllSucceed()
         {
             // Act & Assert
@@ -195,7 +195,7 @@ namespace DotNetARX.Tests.Services
             _mockPerformanceMonitor.Verify(x => x.StartOperation("SaveDocument"), Times.Exactly(3));
         }
 
-        [TestMethod]
+        [TestMethod("DocumentInfo_ConsistentResults_SameCallMultipleTimes")]
         public void DocumentInfo_ConsistentResults_SameCallMultipleTimes()
         {
             // Act
