@@ -1,7 +1,4 @@
-using System.Linq;
-using Autodesk.AutoCAD.DatabaseServices;
-using Moq;
-using NUnit.Framework;
+using PaperSize = DotNetARX.Models.PaperSize;
 
 namespace DotNetARX.Tests.Services
 {
@@ -434,8 +431,8 @@ namespace DotNetARX.Tests.Services
 
             // 验证纸张尺寸是否设置成功
             var actualSize = _layoutService.GetPaperSize(layoutName);
-            Assert.AreEqual<double>(newSize.Width, actualSize.Width, 1e-6);
-            Assert.AreEqual<double>(newSize.Height, actualSize.Height, 1e-6);
+            Assert.AreEqual<double>(newSize.Width, actualSize.Width);
+            Assert.AreEqual<double>(newSize.Height, actualSize.Height);
         }
 
         [TestMethod("SetPaperSize_NonExistentLayout_ReturnsFalse")]

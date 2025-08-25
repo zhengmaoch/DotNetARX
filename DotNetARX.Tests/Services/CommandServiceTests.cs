@@ -1,10 +1,4 @@
-using System;
-using Moq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DotNetARX.Interfaces;
-using DotNetARX.Performance;
-using DotNetARX.Logging;
-using DotNetARX.Events;
+using EventArgs = DotNetARX.Events.EventArgs;
 
 namespace DotNetARX.Tests.Services
 {

@@ -1,4 +1,4 @@
-﻿﻿// AutoCAD
+﻿// AutoCAD
 global using Autodesk.AutoCAD.ApplicationServices;
 global using Autodesk.AutoCAD.Colors;
 global using Autodesk.AutoCAD.DatabaseServices;
@@ -7,7 +7,6 @@ global using Autodesk.AutoCAD.Geometry;
 global using Autodesk.AutoCAD.Runtime;
 // DotNetARX Core
 global using DotNetARX.Async;
-global using DotNetARX.API;
 global using DotNetARX.Caching;
 global using DotNetARX.CodeGeneration;
 global using DotNetARX.Configuration;

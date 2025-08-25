@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DotNetARX.API
+namespace DotNetARX
 {
     public static partial class CAD
     {

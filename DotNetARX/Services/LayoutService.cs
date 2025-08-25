@@ -475,7 +475,8 @@ namespace DotNetARX.Services
                 }
 
                 var sourceLayoutId = layoutManager.GetLayoutId(sourceLayoutName);
-                var newLayoutId = layoutManager.CopyLayout(sourceLayoutName, newLayoutName);
+                layoutManager.CopyLayout(sourceLayoutName, newLayoutName);
+                var newLayoutId = layoutManager.GetLayoutId(newLayoutName);
 
                 _eventBus?.Publish(new LayoutEvent("LayoutCopied", newLayoutName, newLayoutId, $"Source: {sourceLayoutName}"));
                 _logger?.Info($"布局复制成功: {sourceLayoutName} -> {newLayoutName}");
@@ -556,8 +557,8 @@ namespace DotNetARX.Services
                 {
                     var layout = transManager.GetObject<Layout>(layoutId, OpenMode.ForWrite);
                     // 直接设置布局的纸张尺寸
-                    layout.PlotPaperSize = new Point2d(paperSize.Width, paperSize.Height);
-                    
+                    //layout.PlotPaperSize = new Point2d(paperSize.Width, paperSize.Height);
+
                     // 设置其他相关属性
                     var validator = PlotSettingsValidator.Current;
                     validator.SetPlotType(layout, PlotType.Extents);
