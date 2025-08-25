@@ -1,4 +1,10 @@
-using Microsoft.VisualStudio.Telemetry;
+using System;
+using Moq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DotNetARX.Interfaces;
+using DotNetARX.Performance;
+using DotNetARX.Logging;
+using DotNetARX.Events;
 
 namespace DotNetARX.Tests.Services
 {
@@ -47,7 +53,7 @@ namespace DotNetARX.Tests.Services
             _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandCOM"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once());
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<EventArgs>()), Times.Once());
         }
 
         [TestMethod("ExecuteCommandCOM_NullCommand_ReturnsFalse")]
@@ -92,7 +98,7 @@ namespace DotNetARX.Tests.Services
             _mockPerformanceMonitor.Verify(x => x.StartOperation("ExecuteCommandAsync"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<OperationEvent>()), Times.Once());
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<EventArgs>()), Times.Once());
         }
 
         [TestMethod("ExecuteCommandQueue_ValidCommand_ReturnsTrue")]

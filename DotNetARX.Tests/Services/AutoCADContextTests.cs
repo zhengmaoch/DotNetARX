@@ -133,7 +133,7 @@ namespace DotNetARX.Tests.Services
             var actualValue = AutoCADContext.ExecuteSafely(() => expectedValue);
 
             // Assert
-            Assert.AreEqual(expectedValue, actualValue);
+            Assert.AreEqual<int>(expectedValue, actualValue);
         }
 
         [TestMethod("GetObject_ValidObjectId_ReturnsCorrectObject")]
@@ -165,8 +165,8 @@ namespace DotNetARX.Tests.Services
             // Assert
             Assert.IsNotNull(retrievedLine);
             Assert.IsFalse(retrievedLine.ObjectId.IsNull);
-            Assert.AreEqual(new Point3d(0, 0, 0), retrievedLine.StartPoint);
-            Assert.AreEqual(new Point3d(100, 100, 0), retrievedLine.EndPoint);
+            Assert.AreEqual<Point3d>(new Point3d(0, 0, 0), retrievedLine.StartPoint);
+            Assert.AreEqual<Point3d>(new Point3d(100, 100, 0), retrievedLine.EndPoint);
         }
 
         [TestMethod("GetObject_NullObjectId_ReturnsNull")]

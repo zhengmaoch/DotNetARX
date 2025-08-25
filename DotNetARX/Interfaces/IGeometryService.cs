@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 几何工具接口
     /// </summary>
-    public interface IGeometryService
+    public interface IGeometryService : IDisposable
     {
         /// <summary>
         /// 计算两点间距离

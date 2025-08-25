@@ -64,7 +64,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("TextStyleCreated", styleId, "TextStyleCreated", "TextStyle"));
+                _eventBus?.Publish(new StyleServiceEvent("TextStyleCreated", styleId, "TextStyleCreated", "TextStyle"));
                 return styleId;
             }
             catch (Exception ex)
@@ -122,7 +122,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("DimensionStyleCreated", styleId, "DimensionStyleCreated", "DimensionStyle"));
+                _eventBus?.Publish(new StyleServiceEvent("DimensionStyleCreated", styleId, "DimensionStyleCreated", "DimensionStyle"));
                 return styleId;
             }
             catch (Exception ex)
@@ -172,7 +172,7 @@ namespace DotNetARX.Services
 
                     transManager.Commit();
 
-                    _eventBus?.Publish(new StyleEvent("DimStyleCreated", dimStyleId, "DimStyleCreated", "DimensionStyle"));
+                    _eventBus?.Publish(new StyleServiceEvent("DimStyleCreated", dimStyleId, "DimStyleCreated", "DimensionStyle"));
                     _logger?.Info($"标注样式创建成功: {styleName}");
 
                     return dimStyleId;
@@ -232,7 +232,7 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new StyleEvent("LineTypeCreated", lineTypeId, "LineTypeCreated", "LineType"));
+                _eventBus?.Publish(new StyleServiceEvent("LineTypeCreated", lineTypeId, "LineTypeCreated", "LineType"));
                 return lineTypeId;
             }
             catch (Exception ex)
@@ -367,7 +367,7 @@ namespace DotNetARX.Services
     /// <summary>
     /// 样式事件类
     /// </summary>
-    public class StyleEvent : Events.EventArgs
+    public class StyleServiceEvent : Events.EventArgs
     {
         public string EventType { get; }
         public ObjectId StyleId { get; }
@@ -375,7 +375,7 @@ namespace DotNetARX.Services
         public string StyleType { get; }
         public new DateTime Timestamp { get; }
 
-        public StyleEvent(string eventType, ObjectId styleId, string styleName, string styleType)
+        public StyleServiceEvent(string eventType, ObjectId styleId, string styleName, string styleType)
             : base("StyleService")
         {
             EventType = eventType;

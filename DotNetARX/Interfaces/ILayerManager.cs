@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 图层管理接口
     /// </summary>
-    public interface ILayerManager
+    public interface ILayerManager : IDisposable
     {
         /// <summary>
         /// 创建图层

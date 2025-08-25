@@ -1,4 +1,7 @@
-
+using System.Linq;
+using Autodesk.AutoCAD.DatabaseServices;
+using Moq;
+using NUnit.Framework;
 
 namespace DotNetARX.Tests.Services
 {
@@ -53,7 +56,7 @@ namespace DotNetARX.Tests.Services
                 var layoutId = layoutDict.GetAt(layoutName);
                 var layout = transaction.GetObject(layoutId, OpenMode.ForRead) as Layout;
                 Assert.IsNotNull(layout);
-                Assert.AreEqual(layoutName, layout.LayoutName);
+                Assert.AreEqual<string>(layoutName, layout.LayoutName);
 
                 transaction.Commit();
             }
@@ -80,7 +83,7 @@ namespace DotNetARX.Tests.Services
             // Assert
             Assert.IsFalse(result1.IsNull);
             Assert.IsFalse(result2.IsNull);
-            Assert.AreEqual(result1, result2); // 应该返回相同的ObjectId
+            Assert.AreEqual<ObjectId>(result1, result2); // 应该返回相同的ObjectId
         }
 
         [TestMethod("CreateLayout_NullName_ReturnsFalse")]
@@ -180,12 +183,13 @@ namespace DotNetARX.Tests.Services
         public void CreateViewport_ValidParameters_ReturnsValidObjectId()
         {
             // Arrange
+            var layoutId = _layoutService.CreateLayout("ViewportTestLayout");
             var center = new Point3d(100, 100, 0);
             var width = 200.0;
             var height = 150.0;
 
             // Act
-            var result = _layoutService.CreateViewport(center, width, height);
+            var result = _layoutService.CreateViewport(layoutId, center, width, height);
 
             // Assert
             Assert.IsFalse(result.IsNull);
@@ -196,9 +200,9 @@ namespace DotNetARX.Tests.Services
             {
                 var viewport = transaction.GetObject(result, OpenMode.ForRead) as Viewport;
                 Assert.IsNotNull(viewport);
-                Assert.AreEqual(center, viewport.CenterPoint);
-                Assert.AreEqual(width, viewport.Width);
-                Assert.AreEqual(height, viewport.Height);
+                Assert.AreEqual<Point3d>(center, viewport.CenterPoint);
+                Assert.AreEqual<double>(width, viewport.Width);
+                Assert.AreEqual<double>(height, viewport.Height);
 
                 transaction.Commit();
             }
@@ -214,12 +218,13 @@ namespace DotNetARX.Tests.Services
         public void CreateViewport_ZeroDimensions_ReturnsValidObjectId()
         {
             // Arrange
+            var layoutId = _layoutService.CreateLayout("ViewportTestLayout2");
             var center = new Point3d(50, 50, 0);
             var width = 0.0;
             var height = 0.0;
 
             // Act
-            var result = _layoutService.CreateViewport(center, width, height);
+            var result = _layoutService.CreateViewport(layoutId, center, width, height);
 
             // Assert
             Assert.IsFalse(result.IsNull);
@@ -308,7 +313,7 @@ namespace DotNetARX.Tests.Services
 
             // Assert
             Assert.IsNotNull(layoutInfo);
-            Assert.AreEqual(layoutName, layoutInfo.Name);
+            Assert.AreEqual<string>(layoutName, layoutInfo.Name);
             Assert.IsFalse(layoutInfo.ObjectId.IsNull);
         }
 
@@ -429,8 +434,8 @@ namespace DotNetARX.Tests.Services
 
             // 验证纸张尺寸是否设置成功
             var actualSize = _layoutService.GetPaperSize(layoutName);
-            Assert.AreEqual(newSize.Width, actualSize.Width, 1e-6);
-            Assert.AreEqual(newSize.Height, actualSize.Height, 1e-6);
+            Assert.AreEqual<double>(newSize.Width, actualSize.Width, 1e-6);
+            Assert.AreEqual<double>(newSize.Height, actualSize.Height, 1e-6);
         }
 
         [TestMethod("SetPaperSize_NonExistentLayout_ReturnsFalse")]

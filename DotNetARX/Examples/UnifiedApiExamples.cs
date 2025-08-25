@@ -129,12 +129,12 @@ namespace DotNetARX.Examples
             EntityOperationExample();
 
             // 查看性能报告 - 零配置的性能分析
-            var report = GetPerformanceReport();
+            var report = CAD.GetPerformanceReport();
             Console.WriteLine("=== 性能监控报告 ===");
             Console.WriteLine(report);
 
             // 重置统计（可选）
-            ResetPerformanceMetrics();
+            CAD.ResetPerformanceMetrics();
             Console.WriteLine("性能统计已重置");
         }
 
@@ -183,7 +183,7 @@ namespace DotNetARX.Examples
             }
 
             // 6. 查看最终性能报告
-            var finalReport = GetPerformanceReport();
+            var finalReport = CAD.GetPerformanceReport();
             Console.WriteLine("\n=== 复合操作性能报告 ===");
             Console.WriteLine(finalReport);
         }

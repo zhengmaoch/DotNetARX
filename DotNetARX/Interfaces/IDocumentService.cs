@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 文档操作接口
     /// </summary>
-    public interface IDocumentService
+    public interface IDocumentService : IDisposable
     {
         /// <summary>
         /// 检查文档是否已保存

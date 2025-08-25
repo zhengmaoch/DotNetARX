@@ -294,5 +294,15 @@ namespace DotNetARX.Services
                 }
             }, false);
         }
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public void Dispose()
+        {
+            // 当前实现中没有需要特别释放的资源
+            // 但为了接口一致性，提供空实现
+        }
     }
 }
+

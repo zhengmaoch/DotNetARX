@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 工具服务接口
     /// </summary>
-    public interface IUtilityService
+    public interface IUtilityService : IDisposable
     {
         /// <summary>
         /// 验证字符串是否为数字

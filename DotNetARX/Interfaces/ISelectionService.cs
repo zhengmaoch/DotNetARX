@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 选择操作接口
     /// </summary>
-    public interface ISelectionService
+    public interface ISelectionService : IDisposable
     {
         /// <summary>
         /// 按类型选择实体

@@ -1,4 +1,4 @@
-﻿// AutoCAD
+﻿﻿﻿// AutoCAD
 global using Autodesk.AutoCAD.ApplicationServices;
 global using Autodesk.AutoCAD.Colors;
 global using Autodesk.AutoCAD.DatabaseServices;
@@ -21,10 +21,12 @@ global using DotNetARX.Performance;
 global using DotNetARX.ResourceManagement;
 global using DotNetARX.Services;
 global using DotNetARX.Testing;
+global using DotNetARX.Models;
 
 // Testing
 global using Moq;
 global using Microsoft.CodeAnalysis;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 // System
 global using System;

@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using CursorType = DotNetARX.Models.CursorType;
 
 namespace DotNetARX.Services
 {
@@ -186,6 +187,248 @@ namespace DotNetARX.Services
         }
 
         /// <summary>
+        /// 显示进度条
+        /// </summary>
+        public IProgressManager ShowProgress(string title, string message, int maxProgress)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ShowProgress");
+
+            try
+            {
+                var progressManager = ServiceContainer.Instance.GetService<IProgressManager>();
+                if (progressManager != null)
+                {
+                    progressManager.SetTotalOperations(maxProgress);
+                    _eventBus?.Publish(new UIEvent("ProgressStarted", $"Title: {title}, Message: {message}"));
+                    _logger?.Info($"进度条显示: {title} - {message}");
+                }
+
+                return progressManager;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"显示进度条失败: {ex.Message}", ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 隐藏进度条
+        /// </summary>
+        public void HideProgress()
+        {
+            using var operation = _performanceMonitor?.StartOperation("HideProgress");
+
+            try
+            {
+                var progressManager = ServiceContainer.Instance.GetService<IProgressManager>();
+                progressManager?.Complete();
+
+                _eventBus?.Publish(new UIEvent("ProgressStopped", "Progress hidden"));
+                _logger?.Info("进度条隐藏");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"隐藏进度条失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 设置状态栏文本
+        /// </summary>
+        public void SetStatusBarText(string text)
+        {
+            using var operation = _performanceMonitor?.StartOperation("SetStatusBarText");
+
+            try
+            {
+                var doc = Application.DocumentManager.MdiActiveDocument;
+                if (doc != null)
+                {
+                    doc.Editor.WriteMessage($"\n{text ?? ""}\n");
+                }
+
+                _eventBus?.Publish(new UIEvent("StatusBarTextSet", $"Text: {text}"));
+                _logger?.Info($"状态栏文本设置: {text}");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"设置状态栏文本失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 清除状态栏
+        /// </summary>
+        public void ClearStatusBar()
+        {
+            using var operation = _performanceMonitor?.StartOperation("ClearStatusBar");
+
+            try
+            {
+                // 在AutoCAD中，通常通过写入空行来"清除"状态栏
+                var doc = Application.DocumentManager.MdiActiveDocument;
+                if (doc != null)
+                {
+                    doc.Editor.WriteMessage("\n");
+                }
+
+                _eventBus?.Publish(new UIEvent("StatusBarCleared", "Status bar cleared"));
+                _logger?.Info("状态栏清除");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"清除状态栏失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 显示工具提示
+        /// </summary>
+        public void ShowTooltip(string message, Point3d position)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ShowTooltip");
+
+            try
+            {
+                // 工具提示通常通过状态栏显示
+                SetStatusBarText(message);
+
+                _eventBus?.Publish(new UIEvent("TooltipShown", $"Message: {message}, Position: {position}"));
+                _logger?.Info($"工具提示显示: {message} at {position}");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"显示工具提示失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 隐藏工具提示
+        /// </summary>
+        public void HideTooltip()
+        {
+            using var operation = _performanceMonitor?.StartOperation("HideTooltip");
+
+            try
+            {
+                ClearStatusBar();
+
+                _eventBus?.Publish(new UIEvent("TooltipHidden", "Tooltip hidden"));
+                _logger?.Info("工具提示隐藏");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"隐藏工具提示失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 刷新用户界面
+        /// </summary>
+        public void RefreshUI()
+        {
+            using var operation = _performanceMonitor?.StartOperation("RefreshUI");
+
+            try
+            {
+                var doc = Application.DocumentManager.MdiActiveDocument;
+                if (doc != null)
+                {
+                    doc.Editor.UpdateScreen();
+                }
+
+                _eventBus?.Publish(new UIEvent("UIRefreshed", "UI refreshed"));
+                _logger?.Info("用户界面刷新");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"刷新用户界面失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 启用/禁用用户界面
+        /// </summary>
+        public void EnableUI(bool enable)
+        {
+            using var operation = _performanceMonitor?.StartOperation("EnableUI");
+
+            try
+            {
+                // 在AutoCAD环境中，我们通过启用/禁用命令来控制UI
+                // 这里我们只记录日志和事件
+                _eventBus?.Publish(new UIEvent("UIEnabled", $"Enabled: {enable}"));
+                _logger?.Info($"用户界面启用状态设置: {enable}");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"设置用户界面启用状态失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 显示上下文菜单
+        /// </summary>
+        public void ShowContextMenu(List<MenuItemDefinition> menuItems, Point3d position)
+        {
+            using var operation = _performanceMonitor?.StartOperation("ShowContextMenu");
+
+            try
+            {
+                // 在AutoCAD环境中，上下文菜单通常由AutoCAD自身处理
+                // 这里我们只记录日志和事件
+                _eventBus?.Publish(new UIEvent("ContextMenuShown", $"Items: {menuItems?.Count ?? 0}, Position: {position}"));
+                _logger?.Info($"上下文菜单显示: {menuItems?.Count ?? 0} items at {position}");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"显示上下文菜单失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 设置光标
+        /// </summary>
+        public void SetCursor(CursorType cursorType)
+        {
+            using var operation = _performanceMonitor?.StartOperation("SetCursor");
+
+            try
+            {
+                // 在AutoCAD环境中，光标通常由AutoCAD自身管理
+                // 这里我们只记录日志和事件
+                _eventBus?.Publish(new UIEvent("CursorSet", $"CursorType: {cursorType}"));
+                _logger?.Info($"光标设置: {cursorType}");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"设置光标失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 重置光标
+        /// </summary>
+        public void ResetCursor()
+        {
+            using var operation = _performanceMonitor?.StartOperation("ResetCursor");
+
+            try
+            {
+                // 重置为默认光标
+                SetCursor(CursorType.Default);
+
+                _eventBus?.Publish(new UIEvent("CursorReset", "Cursor reset to default"));
+                _logger?.Info("光标重置");
+            }
+            catch (Exception ex)
+            {
+                _logger?.Error($"重置光标失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
         /// 显示输入对话框
         /// </summary>
         private string ShowInputDialog(string prompt, string defaultValue)
@@ -250,6 +493,15 @@ namespace DotNetARX.Services
                 _logger?.Error($"显示输入对话框失败: {ex.Message}", ex);
                 return defaultValue;
             }
+        }
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public void Dispose()
+        {
+            // 当前实现中没有需要特别释放的资源
+            // 但为了接口一致性，提供空实现
         }
     }
 

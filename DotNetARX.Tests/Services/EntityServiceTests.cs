@@ -52,8 +52,8 @@ namespace DotNetARX.Tests.Services
             using (var transaction = TestDatabase.TransactionManager.StartTransaction())
             {
                 var line = transaction.GetObject(entityId, OpenMode.ForRead) as Line;
-                Assert.AreEqual(new Point3d(50, 50, 0), line.StartPoint);
-                Assert.AreEqual(new Point3d(150, 150, 0), line.EndPoint);
+                Assert.AreEqual<Point3d>(new Point3d(50, 50, 0), line.StartPoint);
+                Assert.AreEqual<Point3d>(new Point3d(150, 150, 0), line.EndPoint);
                 transaction.Commit();
             }
         }
@@ -95,8 +95,8 @@ namespace DotNetARX.Tests.Services
                 var originalLine = transaction.GetObject(entityId, OpenMode.ForRead) as Line;
                 var copiedLine = transaction.GetObject(result, OpenMode.ForRead) as Line;
 
-                Assert.AreEqual(new Point3d(100, 0, 0), copiedLine.StartPoint);
-                Assert.AreEqual(new Point3d(200, 100, 0), copiedLine.EndPoint);
+                Assert.AreEqual<Point3d>(new Point3d(100, 0, 0), copiedLine.StartPoint);
+                Assert.AreEqual<Point3d>(new Point3d(200, 100, 0), copiedLine.EndPoint);
 
                 transaction.Commit();
             }
@@ -307,8 +307,8 @@ namespace DotNetARX.Tests.Services
             using (var transaction = TestDatabase.TransactionManager.StartTransaction())
             {
                 var line = transaction.GetObject(entityId, OpenMode.ForRead) as Line;
-                Assert.AreEqual(1, line.Color.ColorIndex);
-                Assert.AreEqual("TestLayer", line.Layer);
+                Assert.AreEqual<double>(1, line.Color.ColorIndex);
+                Assert.AreEqual<string>("TestLayer", line.Layer);
                 // LineType和LineWeight可能需要特殊处理，这里仅验证颜色和图层
                 transaction.Commit();
             }
@@ -345,7 +345,7 @@ namespace DotNetARX.Tests.Services
             Assert.IsNotNull(result);
             Assert.IsFalse(string.IsNullOrEmpty(result.EntityType));
             Assert.IsFalse(result.ObjectId.IsNull);
-            Assert.AreEqual(entityId, result.ObjectId);
+            Assert.AreEqual<ObjectId>(entityId, result.ObjectId);
             Assert.IsTrue(result.Handle.Value > 0);
         }
 

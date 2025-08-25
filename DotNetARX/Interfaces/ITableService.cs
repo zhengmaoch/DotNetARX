@@ -3,7 +3,7 @@ namespace DotNetARX.Interfaces
     /// <summary>
     /// 表格操作接口
     /// </summary>
-    public interface ITableService
+    public interface ITableService : IDisposable
     {
         /// <summary>
         /// 创建表格

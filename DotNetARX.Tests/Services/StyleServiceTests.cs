@@ -51,8 +51,8 @@ namespace DotNetARX.Tests.Services
                 Assert.IsTrue(textStyleTable.Has(styleName));
 
                 var textStyleRecord = transaction.GetObject(textStyleTable[styleName], OpenMode.ForRead) as TextStyleTableRecord;
-                Assert.AreEqual(fontName, textStyleRecord.Font.TypeFace);
-                Assert.AreEqual(textSize, textStyleRecord.TextSize, 1e-6);
+                Assert.AreEqual<string>(fontName, textStyleRecord.Font.TypeFace);
+                Assert.AreEqual<double>(textSize, textStyleRecord.TextSize, 1e-6);
 
                 transaction.Commit();
             }
@@ -61,7 +61,7 @@ namespace DotNetARX.Tests.Services
             _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateTextStyle"), Times.Once());
 
             // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<StyleEvent>()), Times.Once());
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<StyleServiceEvent>()), Times.Once());
         }
 
         [TestMethod("CreateTextStyle_DuplicateName_ReturnsExistingStyle")]
@@ -81,7 +81,7 @@ namespace DotNetARX.Tests.Services
             // Assert
             Assert.IsFalse(result1.IsNull);
             Assert.IsFalse(result2.IsNull);
-            Assert.AreEqual(result1, result2); // 应该返回相同的ObjectId
+            Assert.AreEqual<ObjectId>(result1, result2); // 应该返回相同的ObjectId
         }
 
         [TestMethod("CreateTextStyle_NullStyleName_ReturnsFalse")]
@@ -136,14 +136,17 @@ namespace DotNetARX.Tests.Services
                 Assert.IsTrue(dimStyleTable.Has(styleName));
 
                 var dimStyleRecord = transaction.GetObject(dimStyleTable[styleName], OpenMode.ForRead) as DimStyleTableRecord;
-                Assert.AreEqual(textHeight, dimStyleRecord.Dimtxt, 1e-6);
-                Assert.AreEqual(arrowSize, dimStyleRecord.Dimasz, 1e-6);
+                Assert.AreEqual<double>(textHeight, dimStyleRecord.Dimtxt, 1e-6);
+                Assert.AreEqual<double>(arrowSize, dimStyleRecord.Dimasz, 1e-6);
 
                 transaction.Commit();
             }
 
             // 验证性能监控被调用
             _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateDimStyle"), Times.Once());
+
+            // 验证事件发布
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<StyleServiceEvent>()), Times.Once());
         }
 
         [TestMethod("CreateDimStyle_DuplicateName_ReturnsExistingStyle")]
@@ -163,7 +166,7 @@ namespace DotNetARX.Tests.Services
             // Assert
             Assert.IsFalse(result1.IsNull);
             Assert.IsFalse(result2.IsNull);
-            Assert.AreEqual(result1, result2);
+            Assert.AreEqual<ObjectId>(result1, result2);
         }
 
         [TestMethod("CreateLineType_ValidParameters_ReturnsValidObjectId")]
@@ -188,13 +191,16 @@ namespace DotNetARX.Tests.Services
                 Assert.IsTrue(linetypeTable.Has(linetypeName));
 
                 var linetypeRecord = transaction.GetObject(linetypeTable[linetypeName], OpenMode.ForRead) as LinetypeTableRecord;
-                Assert.AreEqual(description, linetypeRecord.Comments);
+                Assert.AreEqual<string>(description, linetypeRecord.Comments);
 
                 transaction.Commit();
             }
 
             // 验证性能监控被调用
             _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateLineType"), Times.Once());
+
+            // 验证事件发布
+            _mockEventBus.Verify(x => x.Publish(It.IsAny<StyleServiceEvent>()), Times.Once());
         }
 
         [TestMethod("CreateLineType_DuplicateName_ReturnsExistingStyle")]
@@ -214,7 +220,7 @@ namespace DotNetARX.Tests.Services
             // Assert
             Assert.IsFalse(result1.IsNull);
             Assert.IsFalse(result2.IsNull);
-            Assert.AreEqual(result1, result2);
+            Assert.AreEqual<ObjectId>(result1, result2);
         }
 
         [TestMethod("GetAllTextStyles_ReturnsStyleCollection")]
@@ -360,9 +366,9 @@ namespace DotNetARX.Tests.Services
 
             // Assert
             Assert.IsNotNull(styleInfo);
-            Assert.AreEqual(styleName, styleInfo.Name);
-            Assert.AreEqual(fontName, styleInfo.FontName);
-            Assert.AreEqual(textSize, styleInfo.TextSize, 1e-6);
+            Assert.AreEqual<string>(styleName, styleInfo.Name);
+            Assert.AreEqual<string>(fontName, styleInfo.FontName);
+            Assert.AreEqual<double>(textSize, styleInfo.TextSize, 1e-6);
         }
 
         [TestMethod("GetTextStyleInfo_NonExistentStyle_ReturnsNull")]
@@ -389,9 +395,9 @@ namespace DotNetARX.Tests.Services
 
             // Assert
             Assert.IsNotNull(styleInfo);
-            Assert.AreEqual(styleName, styleInfo.Name);
-            Assert.AreEqual(textHeight, styleInfo.TextHeight, 1e-6);
-            Assert.AreEqual(arrowSize, styleInfo.ArrowSize, 1e-6);
+            Assert.AreEqual<string>(styleName, styleInfo.Name);
+            Assert.AreEqual<double>(textHeight, styleInfo.TextHeight, 1e-6);
+            Assert.AreEqual<double>(arrowSize, styleInfo.ArrowSize, 1e-6);
         }
 
         [TestMethod("GetDimStyleInfo_NonExistentStyle_ReturnsNull")]
