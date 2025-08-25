@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX.Extensions
 {
     /// <summary>
@@ -317,8 +315,8 @@ namespace DotNetARX.Extensions
 
             try
             {
-                var closestPoint = entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
-                return point.DistanceTo(closestPoint);
+                var closestPoint = entity.GetClosestPointTo(point);
+                return point.DistanceTo(closestPoint.Value);
             }
             catch
             {
@@ -339,7 +337,7 @@ namespace DotNetARX.Extensions
 
             try
             {
-                return entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
+                return entity.GetClosestPointTo(point).Value;
             }
             catch
             {

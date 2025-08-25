@@ -1,5 +1,3 @@
-using DotNetARX.DependencyInjection;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -47,7 +45,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制直线失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制直线失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制直线失败: {ex.Message}", ex);
             }
         }
 
@@ -74,7 +72,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制圆形失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制圆形失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制圆形失败: {ex.Message}", ex);
             }
         }
 
@@ -102,7 +100,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制圆弧失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制圆弧失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制圆弧失败: {ex.Message}", ex);
             }
         }
 
@@ -141,7 +139,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制多段线失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制多段线失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制多段线失败: {ex.Message}", ex);
             }
         }
 
@@ -179,7 +177,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制文本失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制文本失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制文本失败: {ex.Message}", ex);
             }
         }
 
@@ -217,7 +215,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"绘制多行文本失败: {ex.Message}", ex);
-                throw new DrawingOperationException($"绘制多行文本失败: {ex.Message}", ex);
+                throw new DotNetARXException($"绘制多行文本失败: {ex.Message}", ex);
             }
         }
     }

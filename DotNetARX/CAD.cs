@@ -1,6 +1,3 @@
-using DotNetARX.DependencyInjection;
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX
 {
     /// <summary>

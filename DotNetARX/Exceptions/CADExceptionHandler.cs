@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX.Exceptions
 {
     /// <summary>
@@ -139,7 +137,7 @@ namespace DotNetARX.Exceptions
         public static void ThrowCADException(string operation, string message, ErrorStatus? errorStatus = null)
         {
             Logger.Error($"抛出CAD异常 - {operation}: {message}");
-            throw new CADOperationException(operation, message, errorStatus);
+            throw new DotNetARXException(operation, message);
         }
 
         /// <summary>
@@ -148,7 +146,7 @@ namespace DotNetARX.Exceptions
         public static void ThrowEntityException(string operation, ObjectId entityId, string message)
         {
             Logger.Error($"抛出实体异常 - {operation}: {message}, EntityId: {entityId}");
-            throw new EntityOperationException(operation, entityId, message);
+            throw new DotNetARXException(operation + entityId, message);
         }
     }
 }

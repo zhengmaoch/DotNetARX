@@ -1,5 +1,3 @@
-using DotNetARX.Events;
-
 namespace DotNetARX.Async
 {
     /// <summary>
@@ -190,7 +188,22 @@ namespace DotNetARX.Async
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        var entities = database.GetEntsInDatabase<T>();
+                        var entities = new List<T>();
+                        using (var trans = database.TransactionManager.StartTransaction())
+                        {
+                            var modelSpace = trans.GetObject(database.CurrentSpaceId, OpenMode.ForRead) as BlockTableRecord;
+
+                            foreach (ObjectId objectId in modelSpace)
+                            {
+                                var dbObject = trans.GetObject(objectId, OpenMode.ForRead);
+                                if (dbObject is T entity)
+                                {
+                                    entities.Add(entity);
+                                }
+                            }
+
+                            trans.Commit();
+                        }
 
                         if (predicate != null)
                         {

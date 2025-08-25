@@ -1,4 +1,3 @@
-using DotNetARX.Caching;
 using DotNetARX.Performance.Benchmarks;
 
 namespace DotNetARX.Performance
@@ -109,7 +108,7 @@ namespace DotNetARX.Performance
         {
             _logger.Info("开始运行性能回归检测...");
 
-            var report = new RegressionTestReport
+            var testReport = new RegressionTestReport
             {
                 StartTime = DateTime.UtcNow
             };
@@ -129,9 +128,9 @@ namespace DotNetARX.Performance
                 {
                     if (benchmarkResult.IsSuccessful && benchmarkResult.Summary != null)
                     {
-                        foreach (var benchmarkReport in benchmarkResult.Summary.Reports)
+                        foreach (var report in benchmarkResult.Summary.Reports)
                         {
-                            var operationName = $"{benchmarkReport.BenchmarkCase.Descriptor.Type.Name}.{benchmarkReport.BenchmarkCase.Descriptor.WorkloadMethod.Name}";
+                            var operationName = $"{report.BenchmarkCase.Descriptor.Type.Name}.{report.BenchmarkCase.Descriptor.WorkloadMethod.Name}";
                             var regression = PerformanceAnalyzer.CheckRegression(operationName);
 
                             if (regression.HasRegression)
@@ -142,10 +141,10 @@ namespace DotNetARX.Performance
                     }
                 }
 
-                report.EndTime = DateTime.UtcNow;
-                report.IsSuccessful = true;
-                report.Regressions = regressions;
-                report.RegressionCount = regressions.Count;
+                testReport.EndTime = DateTime.UtcNow;
+                testReport.IsSuccessful = true;
+                testReport.Regressions = regressions;
+                testReport.RegressionCount = regressions.Count;
 
                 if (regressions.Any())
                 {
@@ -162,13 +161,13 @@ namespace DotNetARX.Performance
             }
             catch (Exception ex)
             {
-                report.EndTime = DateTime.UtcNow;
-                report.IsSuccessful = false;
-                report.ErrorMessage = ex.Message;
+                testReport.EndTime = DateTime.UtcNow;
+                testReport.IsSuccessful = false;
+                testReport.ErrorMessage = ex.Message;
                 _logger.Error("性能回归检测失败", ex);
             }
 
-            return report;
+            return testReport;
         }
 
         /// <summary>
@@ -177,6 +176,9 @@ namespace DotNetARX.Performance
         public static async Task<string> GeneratePerformanceReport(TimeSpan? timeRange = null)
         {
             _logger.Info("生成性能分析报告...");
+
+            // 消除编译器警告
+            await Task.CompletedTask;
 
             var sb = new StringBuilder();
             sb.AppendLine("# DotNetARX 性能分析报告");

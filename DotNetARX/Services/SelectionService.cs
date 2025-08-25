@@ -1,5 +1,3 @@
-using DotNetARX.Events;
-
 namespace DotNetARX.Services
 {
     /// <summary>

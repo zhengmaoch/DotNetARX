@@ -1,4 +1,3 @@
-using DotNetARX.Caching;
 using System.Diagnostics;
 
 namespace DotNetARX.Diagnostics

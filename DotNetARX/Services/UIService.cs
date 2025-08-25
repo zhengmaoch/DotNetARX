@@ -1,4 +1,3 @@
-using DotNetARX.DependencyInjection;
 using System.Windows.Forms;
 
 namespace DotNetARX.Services

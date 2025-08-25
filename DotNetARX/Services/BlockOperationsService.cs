@@ -1,5 +1,3 @@
-using DotNetARX.DependencyInjection;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -81,7 +79,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"创建块定义失败: {ex.Message}", ex);
-                throw new BlockOperationException($"创建块定义失败: {ex.Message}", ex);
+                throw new DotNetARXException($"创建块定义失败: {ex.Message}", ex);
             }
         }
 
@@ -138,7 +136,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"插入块失败: {ex.Message}", ex);
-                throw new BlockOperationException($"插入块失败: {ex.Message}", ex);
+                throw new DotNetARXException($"插入块失败: {ex.Message}", ex);
             }
         }
 
@@ -214,7 +212,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"插入带属性块失败: {ex.Message}", ex);
-                throw new BlockOperationException($"插入带属性块失败: {ex.Message}", ex);
+                throw new DotNetARXException($"插入带属性块失败: {ex.Message}", ex);
             }
         }
 
@@ -358,7 +356,7 @@ namespace DotNetARX.Services
             catch (Exception ex)
             {
                 _logger?.Error($"分解块失败: {ex.Message}", ex);
-                throw new BlockOperationException($"分解块失败: {ex.Message}", ex);
+                throw new DotNetARXException($"分解块失败: {ex.Message}", ex);
             }
         }
     }

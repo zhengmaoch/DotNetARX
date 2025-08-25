@@ -1,5 +1,3 @@
-using DotNetARX.Events;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -61,7 +59,7 @@ namespace DotNetARX.Services
                         _logger.Info($"成功创建图层: {layerName} (颜色索引: {colorIndex})");
 
                         // 触发图层创建事件
-                        CADEventManager.OnLayerCreatedAsync(layerName, "LayerManagerService");
+                        CADEventManager.Publisher.Publish(new LayerEventArgs(layerName, "created", "LayerManagerService"));
 
                         // 记录性能指标
                         _performanceMonitor.IncrementCounter("LayersCreated", "LayerOperations");

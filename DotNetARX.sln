@@ -9,7 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetARX.Tests", "DotNetAR
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		..\TsyOpenCutSystem\assets\arxmgd.chm = ..\TsyOpenCutSystem\assets\arxmgd.chm
 		doc\README_完整文档.md = doc\README_完整文档.md
 		doc\✅_任务完成验证报告.md = doc\✅_任务完成验证报告.md
 		doc\快速参考指南.md = doc\快速参考指南.md

@@ -26,7 +26,7 @@ namespace DotNetARX.Services
 
                 // 如果文档有未保存的修改，这个属性会为true
                 bool needsSave = database.RetainOriginalThumbnailBitmap ||
-                               !string.IsNullOrEmpty(database.Filename) && database.SavepropertyBitmap;
+                               !string.IsNullOrEmpty(database.Filename);
 
                 _logger?.Debug($"文档保存检查: {doc.Name} - 需要保存: {needsSave}");
                 return needsSave;

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX
 {
     /// <summary>
@@ -189,7 +187,9 @@ namespace DotNetARX
                 return new List<ObjectId>();
 
             return PerformanceEngine.Execute("CreateEntities", () =>
-                AutoCADContext.ExecuteBatch(context =>
+            {
+                // The lambda passed to ExecuteBatch must return List<ObjectId>
+                return AutoCADContext.ExecuteBatch(context =>
                 {
                     var ids = new List<ObjectId>();
                     var currentSpace = context.GetObject<BlockTableRecord>(
@@ -203,8 +203,8 @@ namespace DotNetARX
                     }
 
                     return ids;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -230,7 +230,8 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("MoveEntity", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     // 快速退出检查
                     if (fromPoint.IsEqualTo(toPoint, 1e-10))
@@ -242,8 +243,8 @@ namespace DotNetARX
 
                     entity.TransformBy(Matrix3d.Displacement(toPoint - fromPoint));
                     return true;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -266,7 +267,8 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("CopyEntity", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     var context = AutoCADContext.Current;
                     var original = context.GetObject<Entity>(entityId, OpenMode.ForRead);
@@ -282,8 +284,8 @@ namespace DotNetARX
                     context.Transaction.AddNewlyCreatedDBObject(copy, true);
 
                     return copyId;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -306,7 +308,8 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("RotateEntity", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     if (Math.Abs(angle) < 1e-10) return true;
 
@@ -316,8 +319,8 @@ namespace DotNetARX
 
                     entity.TransformBy(Matrix3d.Rotation(angle, Vector3d.ZAxis, basePoint));
                     return true;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -340,7 +343,8 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("ScaleEntity", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     if (scaleFactor <= 0) return false;
                     if (Math.Abs(scaleFactor - 1.0) < 1e-10) return true;
@@ -351,8 +355,8 @@ namespace DotNetARX
 
                     entity.TransformBy(Matrix3d.Scaling(scaleFactor, basePoint));
                     return true;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -383,7 +387,8 @@ namespace DotNetARX
 
             // 智能批量操作优化
             return PerformanceEngine.Execute("MoveEntities", () =>
-                AutoCADContext.ExecuteBatch(context =>
+            {
+                return AutoCADContext.ExecuteBatch(context =>
                 {
                     int successCount = 0;
 
@@ -406,8 +411,8 @@ namespace DotNetARX
                     }
 
                     return successCount;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -433,7 +438,8 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("DeleteEntity", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     var context = AutoCADContext.Current;
                     var entity = context.GetObject<Entity>(entityId, OpenMode.ForWrite);
@@ -441,8 +447,8 @@ namespace DotNetARX
 
                     entity.Erase();
                     return true;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -464,7 +470,8 @@ namespace DotNetARX
             if (ids == null || !ids.Any()) return 0;
 
             return PerformanceEngine.Execute("DeleteEntities", () =>
-                AutoCADContext.ExecuteBatch(context =>
+            {
+                return AutoCADContext.ExecuteBatch(context =>
                 {
                     int successCount = 0;
 
@@ -479,8 +486,8 @@ namespace DotNetARX
                     }
 
                     return successCount;
-                })
-            );
+                });
+            });
         }
 
         #endregion 实体删除

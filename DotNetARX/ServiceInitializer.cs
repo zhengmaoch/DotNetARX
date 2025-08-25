@@ -1,7 +1,3 @@
-using DotNetARX.DependencyInjection;
-using DotNetARX.Events;
-using DotNetARX.Services;
-
 namespace DotNetARX
 {
     /// <summary>
@@ -71,7 +67,6 @@ namespace DotNetARX
             container.RegisterSingleton(GlobalPerformanceMonitor.Instance);
 
             // 事件系统服务
-            container.RegisterSingleton<IEventBus>(CADEventManager.DefaultBus);
             container.RegisterSingleton<IEventPublisher>(CADEventManager.Publisher);
         }
 

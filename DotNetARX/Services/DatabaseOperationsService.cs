@@ -1,6 +1,3 @@
-using DotNetARX.DependencyInjection;
-using DotNetARX.Events;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -48,15 +45,15 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntityAdded", objectId, entity.GetType().Name));
+                _eventBus?.Publish(new EntityEventArgs(objectId, "EntityAdded", entity.GetType().Name));
                 _logger?.Info($"实体添加到模型空间成功: {objectId}");
 
                 return objectId;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到模型空间失败: {ex.Message}", ex.ToString());
-                throw new DatabaseOperationException($"添加实体到模型空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到模型空间失败: {ex.Message}", ex);
+                throw new DotNetARXException($"添加实体到模型空间失败: {ex.Message}", ex);
             }
         }
 
@@ -98,15 +95,15 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntitiesBatchAdded", objectIds, $"Count: {objectIds.Count}"));
+                _eventBus?.Publish(new EntityEventArgs(objectIds.Cast<ObjectId>().FirstOrDefault(), "EntitiesBatchAdded", $"Count: {objectIds.Count}"));
                 _logger?.Info($"批量添加 {objectIds.Count} 个实体到模型空间成功");
 
                 return objectIds;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"批量添加实体到模型空间失败: {ex.Message}", ex.ToString());
-                throw new DatabaseOperationException($"批量添加实体到模型空间失败: {ex.Message}", ex);
+                _logger?.Error($"批量添加实体到模型空间失败: {ex.Message}", ex);
+                throw new DotNetARXException($"批量添加实体到模型空间失败: {ex.Message}", ex);
             }
         }
 
@@ -136,15 +133,15 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntityAddedToPaperSpace", objectId, entity.GetType().Name));
+                _eventBus?.Publish(new EntityEventArgs(objectId, "EntityAddedToPaperSpace", entity.GetType().Name));
                 _logger?.Info($"实体添加到图纸空间成功: {objectId}");
 
                 return objectId;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到图纸空间失败: {ex.Message}", ex.ToString());
-                throw new DatabaseOperationException($"添加实体到图纸空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到图纸空间失败: {ex.Message}", ex);
+                throw new DotNetARXException($"添加实体到图纸空间失败: {ex.Message}", ex);
             }
         }
 
@@ -174,15 +171,15 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntityAddedToCurrentSpace", objectId, entity.GetType().Name));
+                _eventBus?.Publish(new EntityEventArgs(objectId, "EntityAddedToCurrentSpace", entity.GetType().Name));
                 _logger?.Info($"实体添加到当前空间成功: {objectId}");
 
                 return objectId;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"添加实体到当前空间失败: {ex.Message}", ex.ToString());
-                throw new DatabaseOperationException($"添加实体到当前空间失败: {ex.Message}", ex);
+                _logger?.Error($"添加实体到当前空间失败: {ex.Message}", ex);
+                throw new DotNetARXException($"添加实体到当前空间失败: {ex.Message}", ex);
             }
         }
 
@@ -207,14 +204,14 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntityDeleted", entityId, ""));
+                _eventBus?.Publish(new EntityEventArgs(entityId, "EntityDeleted"));
                 _logger?.Info($"实体删除成功: {entityId}");
 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"删除实体失败: {ex.Message}", ex.ToString());
+                _logger?.Error($"删除实体失败: {ex.Message}", ex);
                 return false;
             }
         }
@@ -257,14 +254,14 @@ namespace DotNetARX.Services
                     transManager.Commit();
                 }
 
-                _eventBus?.Publish(new EntityEvent("EntitiesBatchDeleted", new ObjectIdCollection(idList.ToArray()), $"Count: {deletedCount}"));
+                _eventBus?.Publish(new EntityEventArgs(idList.FirstOrDefault(), "EntitiesBatchDeleted", $"Count: {deletedCount}"));
                 _logger?.Info($"批量删除完成，成功删除 {deletedCount} 个实体");
 
                 return deletedCount;
             }
             catch (Exception ex)
             {
-                _logger?.Error($"批量删除实体失败: {ex.Message}", ex.ToString());
+                _logger?.Error($"批量删除实体失败: {ex.Message}", ex);
                 return 0;
             }
         }
@@ -312,8 +309,8 @@ namespace DotNetARX.Services
             }
             catch (Exception ex)
             {
-                _logger?.Error($"获取数据库信息失败: {ex.Message}", ex.ToString());
-                throw new DatabaseOperationException($"获取数据库信息失败: {ex.Message}", ex);
+                _logger?.Error($"获取数据库信息失败: {ex.Message}", ex);
+                throw new DotNetARXException($"获取数据库信息失败: {ex.Message}", ex);
             }
         }
     }

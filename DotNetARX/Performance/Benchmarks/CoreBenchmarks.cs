@@ -1,7 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
-using DotNetARX.Caching;
-using DotNetARX.DependencyInjection;
 
 namespace DotNetARX.Performance.Benchmarks
 {

@@ -1,4 +1,3 @@
-using DotNetARX.DependencyInjection;
 using System.Windows.Forms;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 

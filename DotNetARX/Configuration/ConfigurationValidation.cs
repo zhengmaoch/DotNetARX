@@ -1,3 +1,5 @@
+using EventArgs = DotNetARX.Events.EventArgs;
+
 namespace DotNetARX.Configuration
 {
     /// <summary>

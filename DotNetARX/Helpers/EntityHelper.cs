@@ -1,6 +1,3 @@
-using DotNetARX.Extensions;
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX.Helpers
 {
     /// <summary>
@@ -114,7 +111,7 @@ namespace DotNetARX.Helpers
         /// <returns>边界框信息</returns>
         public static ArxBoundingBox? GetBoundingBox(ObjectId entityId)
         {
-            var entity = entityId.TryGetEntity();
+            var entity = entityId.TryGetEntity<Entity>();
             if (entity == null) return null;
 
             try
@@ -124,7 +121,7 @@ namespace DotNetARX.Helpers
             }
             catch (Exception ex)
             {
-                _logger.Debug($"获取实体边界框失败: {entityId}", ex);
+                _logger.Debug($"获取实体边界框失败: {entityId}, 错误: {ex.Message}");
                 return null;
             }
         }
@@ -383,17 +380,19 @@ namespace DotNetARX.Helpers
         /// <param name="columnSpacing">列间距</param>
         /// <returns>阵列生成的实体ID集合</returns>
         public static List<ObjectId> ArrayRectangular(ObjectId entityId, int rows, int columns,
-            double rowSpacing, double columnSpacing)
+    double rowSpacing, double columnSpacing)
         {
             var result = new List<ObjectId>();
 
             if (rows <= 0 || columns <= 0) return result;
 
             return PerformanceEngine.Execute("ArrayRectangular", () =>
+            {
                 AutoCADContext.ExecuteBatch(context =>
                 {
                     var entity = context.GetObject<Entity>(entityId, OpenMode.ForRead);
-                    if (entity == null) return result;
+                    if (entity == null)
+                        return;
 
                     var modelSpace = context.GetObject<BlockTableRecord>(
                         context.Database.GetModelSpaceId(), OpenMode.ForWrite);
@@ -412,10 +411,9 @@ namespace DotNetARX.Helpers
                             result.Add(copyId);
                         }
                     }
-
-                    return result;
-                })
-            );
+                });
+                return result;
+            });
         }
 
         #endregion 实体变换辅助方法

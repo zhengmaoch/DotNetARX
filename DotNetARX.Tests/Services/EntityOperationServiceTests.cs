@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DotNetARX.Configuration;
 
 namespace DotNetARX.Tests.Services
 {
@@ -6,29 +6,20 @@ namespace DotNetARX.Tests.Services
     public class EntityOperationServiceTests : TestBase
     {
         private EntityOperationService _entityOperationService;
-        private Mock<IEventBus> _mockEventBus;
-        private Mock<IPerformanceMonitor> _mockPerformanceMonitor;
         private Mock<ILogger> _mockLogger;
-        private Mock<IOperation> _mockOperation;
+        private Mock<IConfigurationManager> _mockConfig;
 
         [TestInitialize]
         public void Setup()
         {
             base.TestInitialize();
 
-            _mockEventBus = new Mock<IEventBus>();
-            _mockPerformanceMonitor = new Mock<IPerformanceMonitor>();
             _mockLogger = new Mock<ILogger>();
-            _mockOperation = new Mock<IOperation>();
-
-            _mockPerformanceMonitor
-                .Setup(x => x.StartOperation(It.IsAny<string>()))
-                .Returns(_mockOperation.Object);
+            _mockConfig = new Mock<IConfigurationManager>();
 
             _entityOperationService = new EntityOperationService(
-                _mockEventBus.Object,
-                _mockPerformanceMonitor.Object,
-                _mockLogger.Object);
+                _mockLogger.Object,
+                _mockConfig.Object);
         }
 
         private ObjectId CreateTestLine()
@@ -65,12 +56,6 @@ namespace DotNetARX.Tests.Services
                 Assert.AreEqual(new Point3d(150, 150, 0), line.EndPoint);
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("MoveEntity"), Times.Once);
-
-            // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<EntityEvent>()), Times.Once);
         }
 
         [TestMethod]
@@ -115,9 +100,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CopyEntity"), Times.Once);
         }
 
         [TestMethod]
@@ -144,9 +126,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("RotateEntity"), Times.Once);
         }
 
         [TestMethod]
@@ -171,9 +150,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("ScaleEntity"), Times.Once);
         }
 
         [TestMethod]

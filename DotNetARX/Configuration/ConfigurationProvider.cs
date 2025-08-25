@@ -199,7 +199,7 @@ namespace DotNetARX.Configuration
             public const string LogDirectory = "Logging.LogDirectory";
             public const string RetentionDays = "Logging.RetentionDays";
 
-            public static LogLevel GetLevel() => ConfigurationProvider.Get(Level, LogLevel.Info);
+            public static LogLevel GetLevel() => ConfigurationProvider.Get(Level, DotNetARX.Logging.LogLevel.Info);
 
             public static void SetLevel(LogLevel value) => ConfigurationProvider.Set(Level, value);
 

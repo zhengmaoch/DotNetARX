@@ -159,16 +159,6 @@ namespace DotNetARX.Events
     }
 
     /// <summary>
-    /// 事件处理器接口
-    /// </summary>
-    public interface IEventHandler<in T> where T : EventArgs
-    {
-        Task HandleAsync(T eventArgs);
-
-        int Priority { get; }
-    }
-
-    /// <summary>
     /// 事件发布器接口
     /// </summary>
     public interface IEventPublisher
@@ -228,7 +218,7 @@ namespace DotNetARX.Events
     /// <summary>
     /// 事件发布器实现
     /// </summary>
-    public class EventPublisher : IEventPublisher, IDisposable
+    public class EventPublisher : IEventPublisher, DotNetARX.Interfaces.IEventBus, IDisposable
     {
         private readonly ILogger _logger;
         private readonly ConcurrentDictionary<Type, List<object>> _handlers;

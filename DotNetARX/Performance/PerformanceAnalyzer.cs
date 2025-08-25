@@ -5,7 +5,6 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace DotNetARX.Performance
 {

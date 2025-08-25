@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX
 {
     /// <summary>
@@ -99,6 +97,28 @@ namespace DotNetARX
             {
                 batchOperation(context);
                 context.Commit();
+            }
+            catch
+            {
+                context.Abort();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 批量操作执行 - 优化的事务管理，支持返回值
+        /// </summary>
+        /// <typeparam name="T">返回值类型</typeparam>
+        /// <param name="batchOperation">批量操作函数</param>
+        /// <returns>操作结果</returns>
+        public static T ExecuteBatch<T>(Func<AutoCADContext, T> batchOperation)
+        {
+            using var context = new AutoCADContext(null);
+            try
+            {
+                var result = batchOperation(context);
+                context.Commit();
+                return result;
             }
             catch
             {

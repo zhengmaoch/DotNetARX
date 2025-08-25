@@ -28,7 +28,8 @@ namespace DotNetARX.Extensions
             catch (Exception ex)
             {
                 LogManager.GetLogger(typeof(EditorExtensions))?.Error($"多边形选择失败: {ex.Message}", ex);
-                return new PromptSelectionResult(PromptStatus.Error);
+                // 返回错误状态的选择结果
+                return null;
             }
         }
 

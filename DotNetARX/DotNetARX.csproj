@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>preview</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\DotNetARX.XML</DocumentationFile>
@@ -37,6 +38,7 @@
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="System.Reflection" />
     <PackageReference Include="System.Runtime" />
+    <PackageReference Include="System.Runtime.Caching" />
     <PackageReference Include="System.Text.Encoding" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Threading" />

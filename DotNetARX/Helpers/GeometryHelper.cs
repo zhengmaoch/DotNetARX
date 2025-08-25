@@ -1,6 +1,3 @@
-using DotNetARX.Extensions;
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX.Helpers
 {
     /// <summary>
@@ -520,7 +517,7 @@ namespace DotNetARX.Helpers
             catch (Exception ex)
             {
                 info.HasGeometricExtents = false;
-                _logger.Debug($"获取几何信息失败: {entityId}");
+                _logger.Debug($"获取几何信息失败: {entityId}, 错误: {ex.Message}");
             }
 
             return info;

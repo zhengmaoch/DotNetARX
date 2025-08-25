@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX.Extensions
 {
     /// <summary>
@@ -58,7 +56,7 @@ namespace DotNetARX.Extensions
             }
             catch (Exception ex)
             {
-                _logger.Debug($"从Handle获取ObjectId失败: {handle}");
+                _logger.Debug($"从 Handle 获取 ObjectId 失败: {handle}, 错误: {ex.Message}");
                 return false;
             }
         }
@@ -94,10 +92,17 @@ namespace DotNetARX.Extensions
 
             if (handle.TryGetObjectId(out ObjectId objectId, database))
             {
-                var objectId = handle.GetObjectId(database);
                 if (!objectId.IsNull)
                 {
-                    return objectId.TryGetEntity(out entity, mode);
+                    try
+                    {
+                        entity = objectId.GetEntity<T>(mode);
+                        return entity != null;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -113,10 +118,10 @@ namespace DotNetARX.Extensions
         /// <param name="database">数据库对象</param>
         /// <returns>DBObject对象，失败时返回null</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T GetObject<T>(this Handle handle, OpenMode mode = OpenMode.ForRead, Database database = null) where T : DBObject
+        public static T GetObject<T>(this Handle handle, OpenMode mode = OpenMode.ForRead, Database database = null) where T : Entity
         {
             var objectId = handle.GetObjectId(database);
-            return objectId.IsNull ? null : objectId.GetObject<T>(mode);
+            return objectId.IsNull ? null : objectId.GetEntity<T>(mode);
         }
 
         /// <summary>
@@ -208,7 +213,7 @@ namespace DotNetARX.Extensions
             }
             catch (Exception ex)
             {
-                _logger.Debug($"从十六进制字符串创建Handle失败: {hexString}");
+                _logger.Debug($"从十六进制字符串创建Handle失败: {hexString}, 错误: {ex.Message}");
             }
 
             return new Handle(0);

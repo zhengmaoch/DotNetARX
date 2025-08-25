@@ -1,5 +1,3 @@
-using DotNetARX.DependencyInjection;
-
 namespace DotNetARX.Services
 {
     /// <summary>
@@ -55,13 +53,13 @@ namespace DotNetARX.Services
                     // 设置所有行高
                     for (int row = 0; row < rows; row++)
                     {
-                        table.SetRowHeight(row, rowHeight);
+                        table.Rows[row].Height = rowHeight;
                     }
 
                     // 设置所有列宽
                     for (int col = 0; col < columns; col++)
                     {
-                        table.SetColumnWidth(col, columnWidth);
+                        table.Columns[col].Width = columnWidth;
                     }
 
                     // 将表格添加到模型空间
@@ -115,7 +113,7 @@ namespace DotNetARX.Services
                         throw new ArgumentOutOfRangeException(nameof(column), "列索引超出范围");
 
                     // 设置单元格文本
-                    table.SetTextString(row, column, text);
+                    table.Cells[row, column].TextString = text;
 
                     transManager.Commit();
                 }
@@ -159,7 +157,7 @@ namespace DotNetARX.Services
                         throw new ArgumentOutOfRangeException(nameof(column), "列索引超出范围");
 
                     // 获取单元格文本
-                    text = table.GetTextString(row, column);
+                    text = table.Cells[row, column].Contents[0].TextString;
 
                     transManager.Commit();
                 }

@@ -1,6 +1,3 @@
-using DotNetARX.Caching;
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX
 {
     /// <summary>
@@ -34,7 +31,8 @@ namespace DotNetARX
 
             return _layerCache.Value.GetOrAdd(layerName, name =>
                 PerformanceEngine.Execute("CreateLayer", () =>
-                    AutoCADContext.ExecuteSafely(() =>
+                {
+                    return AutoCADContext.ExecuteSafely(() =>
                     {
                         var context = AutoCADContext.Current;
                         var layerTable = context.GetObject<LayerTable>(
@@ -62,8 +60,8 @@ namespace DotNetARX
                         context.Transaction.AddNewlyCreatedDBObject(layerRecord, true);
 
                         return layerId;
-                    })
-                )
+                    });
+                })
             );
         }
 
@@ -93,7 +91,8 @@ namespace DotNetARX
                 return new Dictionary<string, ObjectId>();
 
             return PerformanceEngine.Execute("CreateLayers", () =>
-                AutoCADContext.ExecuteBatch(context =>
+            {
+                return AutoCADContext.ExecuteBatch(context =>
                 {
                     var result = new Dictionary<string, ObjectId>();
                     var layerTable = context.GetObject<LayerTable>(
@@ -145,8 +144,8 @@ namespace DotNetARX
                     }
 
                     return result;
-                })
-            );
+                });
+            });
         }
 
         #endregion 图层创建和管理
@@ -166,7 +165,8 @@ namespace DotNetARX
                 return false;
 
             return PerformanceEngine.Execute("SetCurrentLayer", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     var context = AutoCADContext.Current;
                     var layerTable = context.GetObject<LayerTable>(
@@ -176,8 +176,8 @@ namespace DotNetARX
 
                     context.Database.Clayer = layerTable[layerName];
                     return true;
-                })
-            );
+                });
+            });
         }
 
         /// <summary>
@@ -189,14 +189,15 @@ namespace DotNetARX
             EnsureInitialized();
 
             return PerformanceEngine.Execute("GetCurrentLayerName", () =>
-                AutoCADContext.ExecuteSafely(() =>
+            {
+                return AutoCADContext.ExecuteSafely(() =>
                 {
                     var context = AutoCADContext.Current;
                     var currentLayerId = context.Database.Clayer;
                     var layerRecord = context.GetObject<LayerTableRecord>(currentLayerId, OpenMode.ForRead);
                     return layerRecord?.Name ?? "0";
-                })
-            );
+                });
+            });
         }
 
         /// <summary>

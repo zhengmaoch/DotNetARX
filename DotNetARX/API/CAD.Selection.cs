@@ -1,6 +1,3 @@
-using DotNetARX.Extensions;
-using System.Runtime.CompilerServices;
-
 namespace DotNetARX
 {
     /// <summary>
@@ -405,8 +402,8 @@ namespace DotNetARX
 
                         try
                         {
-                            var closestPoint = entity.GetClosestPointTo(point, Vector3d.ZAxis, false);
-                            var distance = point.DistanceTo(closestPoint);
+                            var closestPoint = entity.GetClosestPointTo(point);
+                            var distance = closestPoint == null ? 0 : point.DistanceTo(closestPoint.Value);
 
                             if (distance < minDistance &&
                                 (!searchRadius.HasValue || distance <= searchRadius.Value))

@@ -1,4 +1,3 @@
-using DotNetARX.DependencyInjection;
 using EventArgs = DotNetARX.Events.EventArgs;
 
 namespace DotNetARX.Services
@@ -217,11 +216,23 @@ namespace DotNetARX.Services
             try
             {
                 var layoutNames = new List<string>();
-                var layoutManager = LayoutManager.Current;
+                var database = Application.DocumentManager.MdiActiveDocument.Database;
 
-                foreach (string layoutName in layoutManager.GetLayoutNames())
+                using (var trans = database.TransactionManager.StartTransaction())
                 {
-                    layoutNames.Add(layoutName);
+                    var layoutDict = trans.GetObject(database.LayoutDictionaryId, OpenMode.ForRead) as DBDictionary;
+
+                    foreach (DictionaryEntry entry in layoutDict)
+                    {
+                        var layoutId = (ObjectId)entry.Value;
+                        var layout = trans.GetObject(layoutId, OpenMode.ForRead) as Layout;
+                        if (layout != null)
+                        {
+                            layoutNames.Add(layout.LayoutName);
+                        }
+                    }
+
+                    trans.Commit();
                 }
 
                 return layoutNames;

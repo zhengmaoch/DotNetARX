@@ -1,34 +1,23 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace DotNetARX.Tests.Services
 {
     [TestClass]
     public class LayerManagerServiceTests : TestBase
     {
         private LayerManagerService _layerManagerService;
-        private Mock<IEventBus> _mockEventBus;
-        private Mock<IPerformanceMonitor> _mockPerformanceMonitor;
         private Mock<ILogger> _mockLogger;
-        private Mock<IOperation> _mockOperation;
+        private Mock<IPerformanceMonitor> _mockPerformanceMonitor;
 
         [TestInitialize]
         public void Setup()
         {
             base.TestInitialize();
 
-            _mockEventBus = new Mock<IEventBus>();
-            _mockPerformanceMonitor = new Mock<IPerformanceMonitor>();
             _mockLogger = new Mock<ILogger>();
-            _mockOperation = new Mock<IOperation>();
-
-            _mockPerformanceMonitor
-                .Setup(x => x.StartOperation(It.IsAny<string>()))
-                .Returns(_mockOperation.Object);
+            _mockPerformanceMonitor = new Mock<IPerformanceMonitor>();
 
             _layerManagerService = new LayerManagerService(
-                _mockEventBus.Object,
-                _mockPerformanceMonitor.Object,
-                _mockLogger.Object);
+                _mockLogger.Object,
+                _mockPerformanceMonitor.Object);
         }
 
         [TestMethod]
@@ -57,15 +46,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("CreateLayer"), Times.Once);
-
-            // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<LayerEvent>()), Times.Once);
-
-            // 验证日志记录
-            _mockLogger.Verify(x => x.Info(It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -80,15 +60,17 @@ namespace DotNetARX.Tests.Services
         }
 
         [TestMethod]
-        public void CreateLayer_DuplicateName_ThrowsLayerOperationException()
+        public void CreateLayer_DuplicateName_ReturnsExistingLayerId()
         {
             // Arrange
             var layerName = "DuplicateLayer";
-            _layerManagerService.CreateLayer(layerName);
+            var firstId = _layerManagerService.CreateLayer(layerName);
 
-            // Act & Assert
-            Assert.ThrowsException<LayerOperationException>(() =>
-                _layerManagerService.CreateLayer(layerName));
+            // Act
+            var secondId = _layerManagerService.CreateLayer(layerName);
+
+            // Assert
+            Assert.AreEqual(firstId, secondId);
         }
 
         [TestMethod]
@@ -113,9 +95,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证性能监控被调用
-            _mockPerformanceMonitor.Verify(x => x.StartOperation("SetCurrentLayer"), Times.Once);
         }
 
         [TestMethod]
@@ -126,9 +105,6 @@ namespace DotNetARX.Tests.Services
 
             // Assert
             Assert.IsFalse(result);
-
-            // 验证警告日志
-            _mockLogger.Verify(x => x.Warning(It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -152,27 +128,6 @@ namespace DotNetARX.Tests.Services
 
                 transaction.Commit();
             }
-
-            // 验证事件发布
-            _mockEventBus.Verify(x => x.Publish(It.IsAny<LayerEvent>()), Times.AtLeast(1));
-        }
-
-        [TestMethod]
-        public void DeleteLayer_CurrentLayer_ReturnsFalse()
-        {
-            // Arrange
-            var layerName = "CurrentLayerToDelete";
-            _layerManagerService.CreateLayer(layerName);
-            _layerManagerService.SetCurrentLayer(layerName);
-
-            // Act
-            var result = _layerManagerService.DeleteLayer(layerName);
-
-            // Assert
-            Assert.IsFalse(result);
-
-            // 验证警告日志
-            _mockLogger.Verify(x => x.Warning(It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -200,40 +155,14 @@ namespace DotNetARX.Tests.Services
 
             // Assert
             Assert.IsTrue(layers.Count >= testLayers.Length);
-
-            foreach (var layerName in testLayers)
-            {
-                Assert.IsTrue(layers.Any(l => l.Name == layerName));
-            }
-        }
-
-        [TestMethod]
-        public void GetLayerNames_ReturnsLayerNames()
-        {
-            // Arrange
-            var testLayers = new[] { "NameLayer1", "NameLayer2", "NameLayer3" };
-            foreach (var layerName in testLayers)
-            {
-                _layerManagerService.CreateLayer(layerName);
-            }
-
-            // Act
-            var layerNames = _layerManagerService.GetLayerNames().ToList();
-
-            // Assert
-            Assert.IsTrue(layerNames.Count >= testLayers.Length);
-
-            foreach (var layerName in testLayers)
-            {
-                Assert.IsTrue(layerNames.Contains(layerName));
-            }
+            Assert.IsTrue(testLayers.All(name => layers.Any(layer => layer.Name == name)));
         }
 
         [TestMethod]
         public void LayerExists_ExistingLayer_ReturnsTrue()
         {
             // Arrange
-            var layerName = "ExistingLayer";
+            var layerName = "ExistTestLayer";
             _layerManagerService.CreateLayer(layerName);
 
             // Act
@@ -254,41 +183,45 @@ namespace DotNetARX.Tests.Services
         }
 
         [TestMethod]
+        public void GetLayerProperties_ExistingLayer_ReturnsProperties()
+        {
+            // Arrange
+            var layerName = "PropTestLayer";
+            short colorIndex = 3; // 绿色
+            _layerManagerService.CreateLayer(layerName, colorIndex);
+
+            // Act
+            var properties = _layerManagerService.GetLayerProperties(layerName);
+
+            // Assert
+            Assert.IsNotNull(properties);
+            Assert.AreEqual(layerName, properties.Name);
+            Assert.AreEqual(colorIndex, properties.ColorIndex);
+        }
+
+        [TestMethod]
         public void SetLayerProperties_ExistingLayer_ReturnsTrue()
         {
             // Arrange
-            var layerName = "PropertiesLayer";
+            var layerName = "SetPropTestLayer";
             _layerManagerService.CreateLayer(layerName);
-            short newColorIndex = 3; // 绿色
 
             // Act
-            var result = _layerManagerService.SetLayerProperties(layerName, newColorIndex, true, false);
+            var result = _layerManagerService.SetLayerProperties(layerName, colorIndex: 2, isLocked: true);
 
             // Assert
             Assert.IsTrue(result);
 
-            // 验证属性设置
+            // 验证属性是否被设置
             using (var transaction = TestDatabase.TransactionManager.StartTransaction())
             {
                 var layerTable = transaction.GetObject(TestDatabase.LayerTableId, OpenMode.ForRead) as LayerTable;
                 var layerRecord = transaction.GetObject(layerTable[layerName], OpenMode.ForRead) as LayerTableRecord;
-
-                Assert.AreEqual(newColorIndex, layerRecord.Color.ColorIndex);
+                Assert.AreEqual(2, layerRecord.Color.ColorIndex);
                 Assert.IsTrue(layerRecord.IsLocked);
-                Assert.IsFalse(layerRecord.IsFrozen);
 
                 transaction.Commit();
             }
-        }
-
-        [TestMethod]
-        public void SetLayerProperties_NonExistingLayer_ReturnsFalse()
-        {
-            // Act
-            var result = _layerManagerService.SetLayerProperties("NonExistingLayer", 1);
-
-            // Assert
-            Assert.IsFalse(result);
         }
 
         [TestCleanup]

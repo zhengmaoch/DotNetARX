@@ -1,5 +1,3 @@
-using DotNetARX.DependencyInjection;
-
 namespace DotNetARX.Services
 {
     /// <summary>
